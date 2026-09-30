@@ -10,6 +10,8 @@ public class FleetContext : DbContext
 
     public DbSet<BusEntity> Buses => Set<BusEntity>();
     public DbSet<DriverAssignmentEntity> DriverAssignments => Set<DriverAssignmentEntity>();
+    public DbSet<BrandEntity> Brands => Set<BrandEntity>();
+    public DbSet<ModelEntity> Models => Set<ModelEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,9 +21,13 @@ public class FleetContext : DbContext
 
         modelBuilder.Entity<BusEntity>().ToTable("Bus", schema: "Fleet");
         modelBuilder.Entity<DriverAssignmentEntity>().ToTable("DriverAssignemts", schema: "Fleet");
+        modelBuilder.Entity<BrandEntity>().ToTable("Brand", schema: "Fleet");
+        modelBuilder.Entity<ModelEntity>().ToTable("Model", schema: "Fleet");
 
         modelBuilder.ApplyConfiguration(new BusConfiguration());
         modelBuilder.ApplyConfiguration(new DriverAssignmentConfiguration());
+        modelBuilder.ApplyConfiguration(new BrandConfiguration());
+        modelBuilder.ApplyConfiguration(new ModelConfiguration());
     }
 
     protected FleetContext() { }

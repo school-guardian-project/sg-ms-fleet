@@ -8,6 +8,6 @@ public class Bus
     public Guid GpsDeviceId { get; set; }
     public byte Capacity { get; set; }
     public string Plate { get; set; } = string.Empty;
-    public int ModelId { get; set; }
+    public byte ModelId { get; set; }
     public Status Status { get; set; } = Status.Active;
 }
