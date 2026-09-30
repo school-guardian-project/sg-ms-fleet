@@ -40,7 +40,7 @@ public class CreateBusService : ICreateBusUseCase
             GpsDeviceId = gpsDeviceId,
             Capacity = capacity,
             Plate = plate,
-            ModelId = modelId,
+            ModelId = (byte)modelId,
             Status = Status.Active
         };
 

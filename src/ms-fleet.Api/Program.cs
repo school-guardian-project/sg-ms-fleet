@@ -1,4 +1,5 @@
 using ms_fleet.Api.Infrastructure.DependencyInjection;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +15,7 @@ if (app.Environment.IsDevelopment())
     app.UseScalarApiReference();
 }
 
-app.MapOpenApi();
-app.MapScalarApiReference();
-
 app.UseHttpsRedirection();
 app.MapControllers();
-
-app.MapGrpcService<ProfileGrpcService>();
 
 app.Run();
