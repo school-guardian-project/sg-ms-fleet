@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "ms_fleet.Api.Bus.Infrastructure.Grpc";
+
+package usermanagement;
+
+service ProfileService {
+  rpc ProfileExists (ProfileExistsRequest) returns (ProfileExistsResponse);
+}
+
+message ProfileExistsRequest {
+  string profile_id = 1;
+}
+
+message ProfileExistsResponse {
+  bool exists = 1;
+}
