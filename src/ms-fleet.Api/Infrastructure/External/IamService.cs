@@ -16,4 +16,11 @@ public class IamService : IIamService
         var response = await _httpClient.GetAsync($"api/profiles/{profileId}/exists", ct);
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<string?> GetDriverNameAsync(Guid profileId, CancellationToken ct = default)
+    {
+        var response = await _httpClient.GetAsync($"api/profiles/{profileId}/name", ct);
+        if (!response.IsSuccessStatusCode) return null;
+        return await response.Content.ReadAsStringAsync(ct);
+    }
 }
