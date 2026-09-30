@@ -1,3 +1,4 @@
+using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
 
@@ -29,7 +30,7 @@ public class UpdateBusService : IUpdateBusUseCase
         bus.CampuseId = campuseId;
         bus.SoatValidity = soatValidity;
         bus.Capacity = capacity;
-        bus.ModelId = modelId;
+        bus.ModelId = (byte)modelId;
 
         await _busRepository.UpdateAsync(bus, ct);
     }

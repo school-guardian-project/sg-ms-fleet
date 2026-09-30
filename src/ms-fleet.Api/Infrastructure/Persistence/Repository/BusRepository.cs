@@ -1,3 +1,4 @@
+using ms_fleet.Api.Infrastructure.Persistence.Entity;
 using Microsoft.EntityFrameworkCore;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
@@ -71,7 +72,7 @@ public class BusRepository : IBusRepository
         GpsDeviceId = entity.GpsDeviceId,
         Capacity = entity.Capacity,
         Plate = entity.Plate,
-        ModelId = entity.ModelId,
+        ModelId = (byte)entity.ModelId,
         Status = entity.Status
     };
 }

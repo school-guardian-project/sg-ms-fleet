@@ -1,3 +1,4 @@
+using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
 
@@ -39,7 +40,7 @@ public class CreateBusService : ICreateBusUseCase
             GpsDeviceId = gpsDeviceId,
             Capacity = capacity,
             Plate = plate,
-            ModelId = modelId,
+            ModelId = (byte)modelId,
             Status = Status.Active
         };
 

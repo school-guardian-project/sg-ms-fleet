@@ -1,3 +1,6 @@
+using ms_fleet.Api.Domain.Ports.Out;
+using Xunit;
+using Xunit;
 using ms_fleet.Api.Domain.Model;
 
 namespace ms_fleet.Api.Tests.Fakes;
