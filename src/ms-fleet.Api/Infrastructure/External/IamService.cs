@@ -1,0 +1,19 @@
+using ms_fleet.Api.Domain.Ports.Out;
+
+namespace ms_fleet.Api.Infrastructure.External;
+
+public class IamService : IIamService
+{
+    private readonly HttpClient _httpClient;
+
+    public IamService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+
+    public async Task<bool> ProfileExistsAsync(Guid profileId, CancellationToken ct = default)
+    {
+        var response = await _httpClient.GetAsync($"api/profiles/{profileId}/exists", ct);
+        return response.IsSuccessStatusCode;
+    }
+}

@@ -14,7 +14,12 @@ if (app.Environment.IsDevelopment())
     app.UseScalarApiReference();
 }
 
+app.MapOpenApi();
+app.MapScalarApiReference();
+
 app.UseHttpsRedirection();
 app.MapControllers();
+
+app.MapGrpcService<ProfileGrpcService>();
 
 app.Run();
