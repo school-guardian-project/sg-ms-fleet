@@ -11,8 +11,6 @@ public class BusController : ControllerBase
     private readonly ICreateBusUseCase _createBusUseCase;
     private readonly IUpdateBusUseCase _updateBusUseCase;
     private readonly IChangeBusStatusUseCase _changeBusStatusUseCase;
-    private readonly IGetBusUseCase _getBusUseCase;
-    private readonly IListBusesUseCase _listBusesUseCase;
     private readonly IListBusesBasicUseCase _listBusesBasicUseCase;
     private readonly IGetBusDetailUseCase _getBusDetailUseCase;
     private readonly IAssignDriverToBusUseCase _assignDriverUseCase;
@@ -22,8 +20,6 @@ public class BusController : ControllerBase
         ICreateBusUseCase createBusUseCase,
         IUpdateBusUseCase updateBusUseCase,
         IChangeBusStatusUseCase changeBusStatusUseCase,
-        IGetBusUseCase getBusUseCase,
-        IListBusesUseCase listBusesUseCase,
         IListBusesBasicUseCase listBusesBasicUseCase,
         IGetBusDetailUseCase getBusDetailUseCase,
         IAssignDriverToBusUseCase assignDriverUseCase,
@@ -32,8 +28,6 @@ public class BusController : ControllerBase
         _createBusUseCase = createBusUseCase;
         _updateBusUseCase = updateBusUseCase;
         _changeBusStatusUseCase = changeBusStatusUseCase;
-        _getBusUseCase = getBusUseCase;
-        _listBusesUseCase = listBusesUseCase;
         _listBusesBasicUseCase = listBusesBasicUseCase;
         _getBusDetailUseCase = getBusDetailUseCase;
         _assignDriverUseCase = assignDriverUseCase;
@@ -67,13 +61,6 @@ public class BusController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> List(CancellationToken ct)
-    {
-        var buses = await _listBusesUseCase.ExecuteAsync(ct);
-        return Ok(buses);
-    }
-
-    [HttpGet("basic")]
     public async Task<IActionResult> ListBasic(CancellationToken ct)
     {
         var buses = await _listBusesBasicUseCase.ExecuteAsync(ct);
@@ -81,13 +68,6 @@ public class BusController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
-    {
-        var bus = await _getBusUseCase.ExecuteAsync(id, ct);
-        return bus is null ? NotFound() : Ok(bus);
-    }
-
-    [HttpGet("{id:guid}/detail")]
     public async Task<IActionResult> GetDetail(Guid id, CancellationToken ct)
     {
         var bus = await _getBusDetailUseCase.ExecuteAsync(id, ct);
