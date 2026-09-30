@@ -1,3 +1,4 @@
+using ms_fleet.Api.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using ms_fleet.Api.Infrastructure.Configuration;
 using ms_fleet.Api.Infrastructure.Persistence;
