@@ -1,0 +1,11 @@
+.env
+
+src/ms-fleet.Api/bin
+src/ms-fleet.Api/obj
+src/ms-fleet.Api/appsettings.*
+tests/**/bin*/
+tests/**/obj*/
+
+.idea
+
+src/ms-route.Api/Config
