@@ -91,5 +91,5 @@ Implements **HU-FLEET-001** (bus fleet CRUD) and **HU-BUS-002** (assign driver t
 ## Related
 
 - Branch: `feature/fleet-bus-management`
-- Base: `dev`
+- Base: `develop`
 - Commits: `6e7309e`, `9752db9`
