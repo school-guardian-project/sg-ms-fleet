@@ -72,7 +72,7 @@ public class BusRepository : IBusRepository
         GpsDeviceId = entity.GpsDeviceId,
         Capacity = entity.Capacity,
         Plate = entity.Plate,
-        ModelId = entity.ModelId,
+        ModelId = (byte)entity.ModelId,
         Status = entity.Status
     };
 }
