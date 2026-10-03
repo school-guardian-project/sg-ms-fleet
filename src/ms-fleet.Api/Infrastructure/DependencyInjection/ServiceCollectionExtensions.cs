@@ -1,5 +1,6 @@
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Application.UseCase;
+using ms_fleet.Api.Application.UseCase.Strategy;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Ports.Out;
 using ms_fleet.Api.Infrastructure.External;
@@ -27,6 +28,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGetBusDetailUseCase, GetBusDetailService>();
         services.AddScoped<IAssignDriverToBusUseCase, AssignDriverToBusService>();
         services.AddScoped<IUnassignDriverFromBusUseCase, UnassignDriverFromBusService>();
+
+        services.AddScoped<IBusSearchStrategy, PlateSearchStrategy>();
+        services.AddScoped<IBusSearchStrategy, NameSearchStrategy>();
+        services.AddScoped<SearchBusesService>();
 
         // ponytail: sin BaseAddress las llamas relativas a ms-iam revientan en tiempo de ejecución.
         // Si ms-iam pasa a exponer los perfiles detrás de Kong, apuntar a la URL del gateway.
