@@ -33,6 +33,18 @@ public class BusRepository : IBusRepository
         return await _context.Buses.AnyAsync(x => x.Plate == plate, ct);
     }
 
+    public async Task<ModelNames?> GetModelNamesAsync(byte modelId, CancellationToken ct = default)
+    {
+        var row = await (
+                from m in _context.Models.AsNoTracking()
+                join b in _context.Brands.AsNoTracking() on m.BrandId equals b.Id
+                where m.Id == modelId
+                select new { Brand = b.Name, Model = m.Name })
+            .FirstOrDefaultAsync(ct);
+
+        return row is null ? null : new ModelNames(row.Brand, row.Model);
+    }
+
     public async Task AddAsync(Bus bus, CancellationToken ct = default)
     {
         var entity = new BusEntity

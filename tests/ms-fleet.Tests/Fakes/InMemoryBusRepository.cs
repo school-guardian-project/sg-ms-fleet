@@ -18,6 +18,11 @@ public class InMemoryBusRepository : IBusRepository
     public Task<bool> ExistsByPlateAsync(string plate, CancellationToken ct = default)
         => Task.FromResult(_buses.Any(x => x.Plate == plate));
 
+    public readonly Dictionary<byte, ModelNames> ModelNames = new();
+
+    public Task<ModelNames?> GetModelNamesAsync(byte modelId, CancellationToken ct = default)
+        => Task.FromResult(ModelNames.TryGetValue(modelId, out var names) ? names : null);
+
     public Task AddAsync(Bus bus, CancellationToken ct = default)
     {
         _buses.Add(bus);

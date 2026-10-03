@@ -28,7 +28,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAssignDriverToBusUseCase, AssignDriverToBusService>();
         services.AddScoped<IUnassignDriverFromBusUseCase, UnassignDriverFromBusService>();
 
-        services.AddHttpClient<IIamService, IamService>();
+        // ponytail: sin BaseAddress las llamas relativas a ms-iam revientan en tiempo de ejecución.
+        // Si ms-iam pasa a exponer los perfiles detrás de Kong, apuntar a la URL del gateway.
+        services.AddHttpClient<IIamService, IamService>(client =>
+            client.BaseAddress = new Uri(configuration["Iam:BaseUrl"] ?? "http://ms-iam:8080"));
         services.AddHttpClient<IGpsDeviceService, GpsDeviceService>();
 
         return services;
