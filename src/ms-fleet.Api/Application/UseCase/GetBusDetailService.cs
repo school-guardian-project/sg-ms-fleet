@@ -34,6 +34,8 @@ public class GetBusDetailService : IGetBusDetailUseCase
             driverName = await _iamService.GetDriverNameAsync(assignment.ProfileId, ct) ?? string.Empty;
         }
 
+        var names = await _busRepository.GetModelNamesAsync(bus.ModelId, ct);
+
         return new BusDetailDto(
             bus.Id,
             bus.Plate,
@@ -44,7 +46,7 @@ public class GetBusDetailService : IGetBusDetailUseCase
             bus.ModelId,
             bus.Status.ToString(),
             driverName,
-            string.Empty,
-            string.Empty);
+            names?.Brand ?? string.Empty,
+            names?.Model ?? string.Empty);
     }
 }

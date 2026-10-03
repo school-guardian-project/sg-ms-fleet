@@ -14,14 +14,37 @@ public class IamService : IIamService
 
     public async Task<bool> ProfileExistsAsync(Guid profileId, CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync($"api/profiles/{profileId}/exists", ct);
-        return response.IsSuccessStatusCode;
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/profiles/{profileId}/exists", ct);
+            return response.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            // ms-iam caído no debe tumbar la asignación de conductores.
+            return false;
+        }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            return false;
+        }
     }
 
     public async Task<string?> GetDriverNameAsync(Guid profileId, CancellationToken ct = default)
     {
-        var response = await _httpClient.GetAsync($"api/profiles/{profileId}/name", ct);
-        if (!response.IsSuccessStatusCode) return null;
-        return await response.Content.ReadAsStringAsync(ct);
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/profiles/{profileId}/name", ct);
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadAsStringAsync(ct);
+        }
+        catch (HttpRequestException)
+        {
+            return null;
+        }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            return null;
+        }
     }
 }
