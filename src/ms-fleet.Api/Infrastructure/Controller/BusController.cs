@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.In;
 
@@ -17,6 +18,7 @@ public class BusController : ControllerBase
     private readonly IGetBusDetailUseCase _getBusDetailUseCase;
     private readonly IAssignDriverToBusUseCase _assignDriverUseCase;
     private readonly IUnassignDriverFromBusUseCase _unassignDriverUseCase;
+    private readonly SearchBusesService _searchBusesService;
 
     public BusController(
         ICreateBusUseCase createBusUseCase,
@@ -26,7 +28,8 @@ public class BusController : ControllerBase
         IListBusesBasicUseCase listBusesBasicUseCase,
         IGetBusDetailUseCase getBusDetailUseCase,
         IAssignDriverToBusUseCase assignDriverUseCase,
-        IUnassignDriverFromBusUseCase unassignDriverUseCase)
+        IUnassignDriverFromBusUseCase unassignDriverUseCase,
+        SearchBusesService searchBusesService)
     {
         _createBusUseCase = createBusUseCase;
         _updateBusUseCase = updateBusUseCase;
@@ -36,6 +39,7 @@ public class BusController : ControllerBase
         _getBusDetailUseCase = getBusDetailUseCase;
         _assignDriverUseCase = assignDriverUseCase;
         _unassignDriverUseCase = unassignDriverUseCase;
+        _searchBusesService = searchBusesService;
     }
 
     [HttpPost]
@@ -68,6 +72,13 @@ public class BusController : ControllerBase
     public async Task<IActionResult> ListBasic(CancellationToken ct)
     {
         var buses = await _listBusesBasicUseCase.ExecuteAsync(ct);
+        return Ok(buses);
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] string? search, CancellationToken ct)
+    {
+        var buses = await _searchBusesService.SearchAsync(search, ct);
         return Ok(buses);
     }
 
