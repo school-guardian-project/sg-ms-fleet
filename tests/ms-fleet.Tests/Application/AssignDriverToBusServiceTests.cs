@@ -59,4 +59,21 @@ public class AssignDriverToBusServiceTests
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             useCase.ExecuteAsync(bus2.Id, profileId));
     }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenBusAlreadyHasDriver_ShouldThrow()
+    {
+        var busRepo = new InMemoryBusRepository();
+        var assignmentRepo = new InMemoryDriverAssignmentRepository();
+        var iamService = new FakeIamService();
+        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService);
+
+        var bus = new Bus { Plate = "ABC123", Status = Status.Active };
+        await busRepo.AddAsync(bus);
+
+        await useCase.ExecuteAsync(bus.Id, Guid.NewGuid());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            useCase.ExecuteAsync(bus.Id, Guid.NewGuid()));
+    }
 }
