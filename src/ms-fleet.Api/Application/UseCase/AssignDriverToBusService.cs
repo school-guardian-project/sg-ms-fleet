@@ -28,6 +28,10 @@ public class AssignDriverToBusService : IAssignDriverToBusUseCase
         if (bus.Status != Status.Active)
             throw new InvalidOperationException("Cannot assign a driver to an inactive bus");
 
+        var busHasDriver = await _assignmentRepository.GetActiveByBusIdAsync(busId, ct);
+        if (busHasDriver != null)
+            throw new InvalidOperationException("The bus already has a driver assigned");
+
         if (!await _iamService.ProfileExistsAsync(profileId, ct))
             throw new InvalidOperationException("Driver profile not found");
 

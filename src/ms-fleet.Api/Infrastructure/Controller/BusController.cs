@@ -99,14 +99,30 @@ public class BusController : ControllerBase
     [HttpPut("{busId:guid}/driver")]
     public async Task<IActionResult> AssignDriver(Guid busId, [FromBody] AssignDriverRequest request, CancellationToken ct)
     {
-        await _assignDriverUseCase.ExecuteAsync(busId, request.ProfileId, ct);
+        try
+        {
+            await _assignDriverUseCase.ExecuteAsync(busId, request.ProfileId, ct);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
         return NoContent();
     }
 
     [HttpDelete("{busId:guid}/driver")]
     public async Task<IActionResult> UnassignDriver(Guid busId, CancellationToken ct)
     {
-        await _unassignDriverUseCase.ExecuteAsync(busId, ct);
+        try
+        {
+            await _unassignDriverUseCase.ExecuteAsync(busId, ct);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
         return NoContent();
     }
 
