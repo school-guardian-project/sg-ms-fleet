@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/ms-fleet.Api/ms-fleet.Api.csproj" />
+  <Project Path="tests/ms-fleet.Tests/ms-fleet.Tests.csproj" />
+</Solution>

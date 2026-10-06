@@ -1,0 +1,28 @@
+services:
+  ms-fleet.api:
+    container_name: ms-fleet
+    image: ms-fleet.api
+    build:
+      context: .
+      dockerfile: src/ms-fleet.Api/Dockerfile
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env
+    networks:
+      - sg-services-network
+
+  ms-fleet.tests:
+    container_name: ms-fleet-tests
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /src
+    volumes:
+      - ./:/src
+    command: dotnet test ./tests/ms-fleet.Tests/ --nologo
+    profiles: [ "tests" ]
+    networks:
+      - sg-services-network
+
+networks:
+  sg-services-network:
+    external: true
