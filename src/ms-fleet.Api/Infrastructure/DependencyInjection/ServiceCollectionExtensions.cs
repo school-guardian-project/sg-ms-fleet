@@ -33,6 +33,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBusSearchStrategy, NameSearchStrategy>();
         services.AddScoped<SearchBusesService>();
 
+        services.AddScoped<IBrandRepository, BrandRepositoryImpl>();
+        services.AddScoped<IModelRepository, ModelRepositoryImpl>();
+        services.AddScoped<IListBrandsUseCase, ListBrandsService>();
+        services.AddScoped<IListModelsUseCase, ListModelsService>();
+
         // ponytail: sin BaseAddress las llamas relativas a ms-iam revientan en tiempo de ejecución.
         // Si ms-iam pasa a exponer los perfiles detrás de Kong, apuntar a la URL del gateway.
         services.AddHttpClient<IIamService, IamService>(client =>
