@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDeleteBusUseCase, DeleteBusService>();
         services.AddScoped<IListBusesBasicUseCase, ListBusesBasicService>();
         services.AddScoped<IGetBusDetailUseCase, GetBusDetailService>();
+        services.AddScoped<IGetBusAssignedToDriverUseCase, GetBusAssignedToDriverService>();
         services.AddScoped<IAssignDriverToBusUseCase, AssignDriverToBusService>();
         services.AddScoped<IUnassignDriverFromBusUseCase, UnassignDriverFromBusService>();
 
