@@ -16,6 +16,7 @@ public class BusController : ControllerBase
     private readonly IDeleteBusUseCase _deleteBusUseCase;
     private readonly IListBusesBasicUseCase _listBusesBasicUseCase;
     private readonly IGetBusDetailUseCase _getBusDetailUseCase;
+    private readonly IGetBusAssignedToDriverUseCase _getBusAssignedToDriverUseCase;
     private readonly IAssignDriverToBusUseCase _assignDriverUseCase;
     private readonly IUnassignDriverFromBusUseCase _unassignDriverUseCase;
     private readonly SearchBusesService _searchBusesService;
@@ -27,6 +28,7 @@ public class BusController : ControllerBase
         IDeleteBusUseCase deleteBusUseCase,
         IListBusesBasicUseCase listBusesBasicUseCase,
         IGetBusDetailUseCase getBusDetailUseCase,
+        IGetBusAssignedToDriverUseCase getBusAssignedToDriverUseCase,
         IAssignDriverToBusUseCase assignDriverUseCase,
         IUnassignDriverFromBusUseCase unassignDriverUseCase,
         SearchBusesService searchBusesService)
@@ -37,6 +39,7 @@ public class BusController : ControllerBase
         _deleteBusUseCase = deleteBusUseCase;
         _listBusesBasicUseCase = listBusesBasicUseCase;
         _getBusDetailUseCase = getBusDetailUseCase;
+        _getBusAssignedToDriverUseCase = getBusAssignedToDriverUseCase;
         _assignDriverUseCase = assignDriverUseCase;
         _unassignDriverUseCase = unassignDriverUseCase;
         _searchBusesService = searchBusesService;
@@ -86,6 +89,13 @@ public class BusController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id, CancellationToken ct)
     {
         var bus = await _getBusDetailUseCase.ExecuteAsync(id, ct);
+        return bus is null ? NotFound() : Ok(bus);
+    }
+
+    [HttpGet("assigned/{profileId:guid}")]
+    public async Task<IActionResult> GetAssignedToDriver(Guid profileId, CancellationToken ct)
+    {
+        var bus = await _getBusAssignedToDriverUseCase.ExecuteAsync(profileId, ct);
         return bus is null ? NotFound() : Ok(bus);
     }
 
