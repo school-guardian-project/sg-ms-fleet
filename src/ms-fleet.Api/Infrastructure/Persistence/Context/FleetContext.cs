@@ -15,6 +15,9 @@ public class FleetContext : DbContext
     public DbSet<BrandEntity> Brands => Set<BrandEntity>();
     public DbSet<ModelEntity> Models => Set<ModelEntity>();
 
+    // Referencia cross-schema (solo lectura) a School.SchoolCampus para el filtrado multi-tenant.
+    public DbSet<SchoolCampusEntity> SchoolCampuses => Set<SchoolCampusEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -25,6 +28,12 @@ public class FleetContext : DbContext
         modelBuilder.Entity<DriverAssignmentEntity>().ToTable("DriverAssignemts", schema: "Fleet");
         modelBuilder.Entity<BrandEntity>().ToTable("Brand", schema: "Fleet");
         modelBuilder.Entity<ModelEntity>().ToTable("Model", schema: "Fleet");
+
+        modelBuilder.Entity<SchoolCampusEntity>(entity =>
+        {
+            entity.ToTable("SchoolCampus", schema: "School");
+            entity.HasKey(x => x.Id);
+        });
 
         modelBuilder.ApplyConfiguration(new BusConfiguration());
         modelBuilder.ApplyConfiguration(new DriverAssignmentConfiguration());

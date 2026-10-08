@@ -34,7 +34,7 @@ public class SearchBusesServiceTests
         await busRepo.AddAsync(hino);
         busRepo.ModelNames[9] = new ModelNames("Hino", "300");
 
-        var listUseCase = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService());
+        var listUseCase = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
         var service = new SearchBusesService(listUseCase, new IBusSearchStrategy[]
         {
             new PlateSearchStrategy(),

@@ -27,7 +27,7 @@ public class BusViewFieldsTests
         busRepo.ModelNames[7] = new ModelNames("Mercedes", "O500");
 
         var service = new ListBusesBasicService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService());
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
 
         var result = Assert.Single(await service.ExecuteAsync());
 
@@ -47,7 +47,7 @@ public class BusViewFieldsTests
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         await assignmentRepo.AddAsync(new DriverAssignment { BusId = bus.Id, ProfileId = Guid.NewGuid() });
 
-        var service = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService());
+        var service = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
 
         var result = Assert.Single(await service.ExecuteAsync());
 
