@@ -22,9 +22,14 @@ public class BusRepository : IBusRepository
         return entity is null ? null : ToDomain(entity);
     }
 
-    public async Task<IReadOnlyList<Bus>> GetAllAsync(CancellationToken ct = default)
+    public async Task<IReadOnlyList<Bus>> GetAllAsync(IReadOnlyCollection<Guid>? campusIds = null, CancellationToken ct = default)
     {
-        var entities = await _context.Buses.AsNoTracking().ToListAsync(ct);
+        var query = _context.Buses.AsNoTracking();
+
+        if (campusIds is not null)
+            query = query.Where(x => campusIds.Contains(x.CampuseId));
+
+        var entities = await query.ToListAsync(ct);
         return entities.Select(ToDomain).ToList();
     }
 

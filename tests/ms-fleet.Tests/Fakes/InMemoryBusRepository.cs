@@ -12,8 +12,9 @@ public class InMemoryBusRepository : IBusRepository
     public Task<Bus?> GetByIdAsync(Guid busId, CancellationToken ct = default)
         => Task.FromResult(_buses.FirstOrDefault(x => x.Id == busId));
 
-    public Task<IReadOnlyList<Bus>> GetAllAsync(CancellationToken ct = default)
-        => Task.FromResult<IReadOnlyList<Bus>>(_buses.ToList());
+    public Task<IReadOnlyList<Bus>> GetAllAsync(IReadOnlyCollection<Guid>? campusIds = null, CancellationToken ct = default)
+        => Task.FromResult<IReadOnlyList<Bus>>(
+            _buses.Where(x => campusIds is null || campusIds.Contains(x.CampuseId)).ToList());
 
     public Task<bool> ExistsByPlateAsync(string plate, CancellationToken ct = default)
         => Task.FromResult(_buses.Any(x => x.Plate == plate));
