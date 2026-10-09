@@ -24,7 +24,7 @@ public class BusRepository : IBusRepository
 
     public async Task<IReadOnlyList<Bus>> GetAllAsync(IReadOnlyCollection<Guid>? campusIds = null, CancellationToken ct = default)
     {
-        var query = _context.Buses.AsNoTracking();
+        var query = _context.Buses.AsNoTracking().Where(x => x.Status == Status.Active);
 
         if (campusIds is not null)
             query = query.Where(x => campusIds.Contains(x.CampuseId));
@@ -76,6 +76,8 @@ public class BusRepository : IBusRepository
         entity.SoatValidity = bus.SoatValidity;
         entity.Capacity = bus.Capacity;
         entity.ModelId = bus.ModelId;
+        entity.Plate = bus.Plate;
+        entity.GpsDeviceId = bus.GpsDeviceId;
         entity.Status = bus.Status;
 
         await _context.SaveChangesAsync(ct);

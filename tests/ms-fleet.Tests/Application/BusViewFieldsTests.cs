@@ -63,7 +63,7 @@ public class BusViewFieldsTests
         busRepo.ModelNames[3] = new ModelNames("Hino", "300");
 
         var service = new GetBusDetailService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService());
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeGpsDeviceService());
 
         var result = await service.ExecuteAsync(bus.Id);
 
@@ -81,7 +81,7 @@ public class BusViewFieldsTests
         await busRepo.AddAsync(bus);
 
         var service = new GetBusDetailService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService());
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeGpsDeviceService());
 
         var result = await service.ExecuteAsync(bus.Id);
 

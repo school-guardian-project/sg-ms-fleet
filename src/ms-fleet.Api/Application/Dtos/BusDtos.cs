@@ -25,4 +25,9 @@ public record BusDetailDto(
     string Status,
     string DriverName,
     string Brand,
-    string Model);
+    string Model,
+    string GpsImei = "",
+    bool? GpsStatus = null,
+    Guid? DriverProfileId = null);
+
+public record GpsDeviceDto(Guid Id, string Imei, bool GpsStatus, Guid? AssignedBusId, string AssignedPlate);

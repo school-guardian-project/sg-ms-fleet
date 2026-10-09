@@ -48,16 +48,36 @@ public class BusController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateBusRequest request, CancellationToken ct)
     {
-        var busId = await _createBusUseCase.ExecuteAsync(
-            request.CampuseId, request.SoatValidity, request.GpsDeviceId,
-            request.Capacity, request.Plate, request.ModelId, ct);
-        return Ok(busId);
+        try
+        {
+            var busId = await _createBusUseCase.ExecuteAsync(
+                request.CampuseId, request.SoatValidity, request.GpsDeviceId,
+                request.Capacity, request.Plate, request.ModelId, request.GpsStatus, request.GpsImei, ct);
+            return Ok(busId);
+        }
+        catch (ArgumentException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+        }
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBusRequest request, CancellationToken ct)
     {
-        await _updateBusUseCase.ExecuteAsync(id, request.CampuseId, request.SoatValidity, request.Capacity, request.ModelId, ct);
+        try
+        {
+            await _updateBusUseCase.ExecuteAsync(
+                id, request.CampuseId, request.SoatValidity, request.Capacity, request.ModelId,
+                request.Plate, request.GpsDeviceId, request.GpsStatus, request.GpsImei, ct);
+        }
+        catch (ArgumentException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status404NotFound);
+        }
         return NoContent();
     }
 
@@ -144,6 +164,8 @@ public class BusController : ControllerBase
         public byte Capacity { get; set; }
         public string Plate { get; set; } = string.Empty;
         public int ModelId { get; set; }
+        public bool? GpsStatus { get; set; }
+        public string? GpsImei { get; set; }
     }
 
     public class UpdateBusRequest
@@ -152,6 +174,10 @@ public class BusController : ControllerBase
         public DateTime SoatValidity { get; set; }
         public byte Capacity { get; set; }
         public int ModelId { get; set; }
+        public string? Plate { get; set; }
+        public Guid? GpsDeviceId { get; set; }
+        public bool? GpsStatus { get; set; }
+        public string? GpsImei { get; set; }
     }
 
     public class ChangeStatusRequest
