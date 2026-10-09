@@ -17,6 +17,7 @@ public class FleetContext : DbContext
 
     // Referencia cross-schema (solo lectura) a School.SchoolCampus para el filtrado multi-tenant.
     public DbSet<SchoolCampusEntity> SchoolCampuses => Set<SchoolCampusEntity>();
+    public DbSet<GpsDeviceEntity> GpsDevices => Set<GpsDeviceEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,6 +33,12 @@ public class FleetContext : DbContext
         modelBuilder.Entity<SchoolCampusEntity>(entity =>
         {
             entity.ToTable("SchoolCampus", schema: "School");
+            entity.HasKey(x => x.Id);
+        });
+
+        modelBuilder.Entity<GpsDeviceEntity>(entity =>
+        {
+            entity.ToTable("GpsDevice", schema: "Gps", t => t.ExcludeFromMigrations());
             entity.HasKey(x => x.Id);
         });
 

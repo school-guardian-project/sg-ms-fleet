@@ -10,5 +10,7 @@ public interface ICreateBusUseCase
         byte capacity,
         string plate,
         int modelId,
+        bool? gpsStatus = null,
+        string? gpsImei = null,
         CancellationToken ct = default);
 }

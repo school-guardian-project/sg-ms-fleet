@@ -51,11 +51,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IListBrandsUseCase, ListBrandsService>();
         services.AddScoped<IListModelsUseCase, ListModelsService>();
 
-        // ponytail: sin BaseAddress las llamas relativas a ms-iam revientan en tiempo de ejecución.
-        // Si ms-iam pasa a exponer los perfiles detrás de Kong, apuntar a la URL del gateway.
+        // Los perfiles (existe / nombre) los expone ms-user-management en api/profiles,
+        // sin token: ms-iam exige JWT y respondía 401, dejando vacío el conductor.
         services.AddHttpClient<IIamService, IamService>(client =>
-            client.BaseAddress = new Uri(configuration["Iam:BaseUrl"] ?? "http://ms-iam:8080"));
-        services.AddHttpClient<IGpsDeviceService, GpsDeviceService>();
+            client.BaseAddress = new Uri(configuration["Iam:BaseUrl"] ?? "http://ms-user-management:8080"));
+        services.AddScoped<IGpsDeviceService, GpsDeviceService>();
 
         return services;
     }
