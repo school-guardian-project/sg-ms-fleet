@@ -8,7 +8,7 @@ namespace ms_fleet.Api.Infrastructure.Persistence.Context;
 
 public class FleetContext : DbContext
 {
-    public FleetContext(DbContextOptions options) : base(options) { }
+    public FleetContext(DbContextOptions<FleetContext> options) : base(options) { }
 
     public DbSet<BusEntity> Buses => Set<BusEntity>();
     public DbSet<DriverAssignmentEntity> DriverAssignments => Set<DriverAssignmentEntity>();
@@ -40,6 +40,4 @@ public class FleetContext : DbContext
         modelBuilder.ApplyConfiguration(new BrandConfiguration());
         modelBuilder.ApplyConfiguration(new ModelConfiguration());
     }
-
-    protected FleetContext() { }
 }
