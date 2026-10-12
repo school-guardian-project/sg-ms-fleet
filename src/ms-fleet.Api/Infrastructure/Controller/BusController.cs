@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ms_fleet.Api.Application.Dtos;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
@@ -45,6 +46,7 @@ public class BusController : ControllerBase
         _searchBusesService = searchBusesService;
     }
 
+    [EnableRateLimiting("writes")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateBusRequest request, CancellationToken ct)
     {
@@ -61,6 +63,7 @@ public class BusController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("writes")]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBusRequest request, CancellationToken ct)
     {
@@ -81,6 +84,7 @@ public class BusController : ControllerBase
         return NoContent();
     }
 
+    [EnableRateLimiting("writes")]
     [HttpPatch("{id:guid}/status")]
     public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeStatusRequest request, CancellationToken ct)
     {
@@ -119,6 +123,7 @@ public class BusController : ControllerBase
         return bus is null ? NotFound() : Ok(bus);
     }
 
+    [EnableRateLimiting("writes")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
@@ -126,6 +131,7 @@ public class BusController : ControllerBase
         return NoContent();
     }
 
+    [EnableRateLimiting("writes")]
     [HttpPut("{busId:guid}/driver")]
     public async Task<IActionResult> AssignDriver(Guid busId, [FromBody] AssignDriverRequest request, CancellationToken ct)
     {
@@ -141,6 +147,7 @@ public class BusController : ControllerBase
         return NoContent();
     }
 
+    [EnableRateLimiting("writes")]
     [HttpDelete("{busId:guid}/driver")]
     public async Task<IActionResult> UnassignDriver(Guid busId, CancellationToken ct)
     {

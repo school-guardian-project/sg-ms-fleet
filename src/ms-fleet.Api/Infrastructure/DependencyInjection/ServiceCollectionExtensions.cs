@@ -21,8 +21,11 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddFleetServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<FleetContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContextPool<FleetContext>(
+            (sp, options) => options.UseSqlServer(
+                configuration.GetConnectionString("DefaultConnection"),
+                sql => sql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)),
+            poolSize: 32);
 
         services.AddHttpContextAccessor();
         services.AddJwtAuthentication(configuration);
