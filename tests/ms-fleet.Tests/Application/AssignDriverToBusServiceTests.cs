@@ -1,14 +1,14 @@
-using Xunit;
-using Xunit;
+using NUnit.Framework;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
 
 namespace ms_fleet.Api.Tests.Application;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class AssignDriverToBusServiceTests
 {
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithValidData_ShouldAssign()
     {
         var busRepo = new InMemoryBusRepository();
@@ -22,10 +22,10 @@ public class AssignDriverToBusServiceTests
         await useCase.ExecuteAsync(bus.Id, Guid.NewGuid());
 
         var assignment = await assignmentRepo.GetActiveByBusIdAsync(bus.Id);
-        Assert.NotNull(assignment);
+        Assert.That(assignment, Is.Not.Null);
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithInactiveBus_ShouldThrow()
     {
         var busRepo = new InMemoryBusRepository();
@@ -36,11 +36,11 @@ public class AssignDriverToBusServiceTests
         var bus = new Bus { Plate = "ABC123", Status = Status.Inactive };
         await busRepo.AddAsync(bus);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        Assert.ThrowsAsync<InvalidOperationException>(() =>
             useCase.ExecuteAsync(bus.Id, Guid.NewGuid()));
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithDriverAlreadyAssigned_ShouldThrow()
     {
         var busRepo = new InMemoryBusRepository();
@@ -56,11 +56,11 @@ public class AssignDriverToBusServiceTests
         var profileId = Guid.NewGuid();
         await useCase.ExecuteAsync(bus1.Id, profileId);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        Assert.ThrowsAsync<InvalidOperationException>(() =>
             useCase.ExecuteAsync(bus2.Id, profileId));
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WhenBusAlreadyHasDriver_ShouldThrow()
     {
         var busRepo = new InMemoryBusRepository();
@@ -73,7 +73,7 @@ public class AssignDriverToBusServiceTests
 
         await useCase.ExecuteAsync(bus.Id, Guid.NewGuid());
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        Assert.ThrowsAsync<InvalidOperationException>(() =>
             useCase.ExecuteAsync(bus.Id, Guid.NewGuid()));
     }
 }

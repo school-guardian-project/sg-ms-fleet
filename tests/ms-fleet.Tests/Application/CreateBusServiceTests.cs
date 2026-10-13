@@ -1,14 +1,14 @@
-using Xunit;
-using Xunit;
+using NUnit.Framework;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
 
 namespace ms_fleet.Api.Tests.Application;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class CreateBusServiceTests
 {
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithValidData_ShouldReturnBusId()
     {
         var repo = new InMemoryBusRepository();
@@ -19,10 +19,10 @@ public class CreateBusServiceTests
             Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
             40, "ABC123", 1);
 
-        Assert.NotEqual(Guid.Empty, busId);
+        Assert.That(busId, Is.Not.EqualTo(Guid.Empty));
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithDuplicatePlate_ShouldThrow()
     {
         var repo = new InMemoryBusRepository();
@@ -33,20 +33,20 @@ public class CreateBusServiceTests
             Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
             40, "ABC123", 1);
 
-        await Assert.ThrowsAsync<ArgumentException>(() =>
+        Assert.ThrowsAsync<ArgumentException>(() =>
             useCase.ExecuteAsync(
                 Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
                 40, "ABC123", 1));
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithZeroCapacity_ShouldThrow()
     {
         var repo = new InMemoryBusRepository();
         var gpsService = new FakeGpsDeviceService();
         var useCase = new CreateBusService(repo, gpsService);
 
-        await Assert.ThrowsAsync<ArgumentException>(() =>
+        Assert.ThrowsAsync<ArgumentException>(() =>
             useCase.ExecuteAsync(
                 Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
                 0, "ABC123", 1));

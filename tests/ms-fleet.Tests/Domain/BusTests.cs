@@ -1,10 +1,10 @@
-using Xunit;
-using Xunit;
+using NUnit.Framework;
 namespace ms_fleet.Api.Domain.Model;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class BusTests
 {
-    [Fact]
+    [Test]
     public void CreateBus_WithValidData_ShouldHaveActiveStatus()
     {
         var bus = new Bus
@@ -17,15 +17,15 @@ public class BusTests
             SoatValidity = DateTime.UtcNow.AddYears(1)
         };
 
-        Assert.Equal(Status.Active, bus.Status);
-        Assert.Equal("ABC123", bus.Plate);
-        Assert.Equal(40, bus.Capacity);
+        Assert.That(bus.Status, Is.EqualTo(Status.Active));
+        Assert.That(bus.Plate, Is.EqualTo("ABC123"));
+        Assert.That(bus.Capacity, Is.EqualTo(40));
     }
 
-    [Fact]
+    [Test]
     public void CreateBus_ShouldGenerateNewId()
     {
         var bus = new Bus();
-        Assert.NotEqual(Guid.Empty, bus.Id);
+        Assert.That(bus.Id, Is.Not.EqualTo(Guid.Empty));
     }
 }

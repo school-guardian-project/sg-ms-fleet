@@ -1,10 +1,11 @@
-using Xunit;
+using NUnit.Framework;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
 
 namespace ms_fleet.Api.Tests.Application;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class BusViewFieldsTests
 {
     private static Bus NewBus(byte modelId) => new()
@@ -18,7 +19,7 @@ public class BusViewFieldsTests
         Status = Status.Active
     };
 
-    [Fact]
+    [Test]
     public async Task List_FillsBrandModelAndCampuseId()
     {
         var busRepo = new InMemoryBusRepository();
@@ -29,15 +30,17 @@ public class BusViewFieldsTests
         var service = new ListBusesBasicService(
             busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
 
-        var result = Assert.Single(await service.ExecuteAsync());
+        var resultItems = await service.ExecuteAsync();
+        Assert.That(resultItems, Has.Exactly(1).Items);
+        var result = resultItems.Single();
 
-        Assert.Equal(bus.CampuseId, result.CampuseId);
-        Assert.Equal("Mercedes", result.Brand);
-        Assert.Equal("O500", result.Model);
-        Assert.Equal(string.Empty, result.DriverName);
+        Assert.That(result.CampuseId, Is.EqualTo(bus.CampuseId));
+        Assert.That(result.Brand, Is.EqualTo("Mercedes"));
+        Assert.That(result.Model, Is.EqualTo("O500"));
+        Assert.That(result.DriverName, Is.EqualTo(string.Empty));
     }
 
-    [Fact]
+    [Test]
     public async Task List_WithAssignedDriver_FillsDriverName()
     {
         var busRepo = new InMemoryBusRepository();
@@ -49,12 +52,14 @@ public class BusViewFieldsTests
 
         var service = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
 
-        var result = Assert.Single(await service.ExecuteAsync());
+        var resultItems = await service.ExecuteAsync();
+        Assert.That(resultItems, Has.Exactly(1).Items);
+        var result = resultItems.Single();
 
-        Assert.Equal("Test Driver", result.DriverName);
+        Assert.That(result.DriverName, Is.EqualTo("Test Driver"));
     }
 
-    [Fact]
+    [Test]
     public async Task Detail_FillsBrandAndModel()
     {
         var busRepo = new InMemoryBusRepository();
@@ -67,13 +72,13 @@ public class BusViewFieldsTests
 
         var result = await service.ExecuteAsync(bus.Id);
 
-        Assert.NotNull(result);
-        Assert.Equal("Hino", result.Brand);
-        Assert.Equal("300", result.Model);
-        Assert.Equal(bus.CampuseId, result.CampuseId);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Brand, Is.EqualTo("Hino"));
+        Assert.That(result.Model, Is.EqualTo("300"));
+        Assert.That(result.CampuseId, Is.EqualTo(bus.CampuseId));
     }
 
-    [Fact]
+    [Test]
     public async Task Detail_UnknownModel_LeavesBrandAndModelEmpty()
     {
         var busRepo = new InMemoryBusRepository();
@@ -85,8 +90,8 @@ public class BusViewFieldsTests
 
         var result = await service.ExecuteAsync(bus.Id);
 
-        Assert.NotNull(result);
-        Assert.Equal(string.Empty, result.Brand);
-        Assert.Equal(string.Empty, result.Model);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Brand, Is.EqualTo(string.Empty));
+        Assert.That(result.Model, Is.EqualTo(string.Empty));
     }
 }
