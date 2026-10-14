@@ -1,11 +1,20 @@
 syntax = "proto3";
 
-option csharp_namespace = "ms_fleet.Api.Bus.Infrastructure.Grpc";
+// Contract v1 for ms-fleet's interactions with ms-iam (internal profile
+// lookups, driver name). The HTTP counterpart (/api/profiles/**) was removed:
+// inter-service traffic is gRPC only (ADR-005).
+//
+// Authentication: metadata header "x-internal-api-key" (shared secret from env).
+package usermanagement.v1;
 
-package usermanagement;
+option csharp_namespace = "ms_fleet.Api.Infrastructure.Grpc";
 
 service ProfileService {
+  // Returns true if the profile exists and is active.
   rpc ProfileExists (ProfileExistsRequest) returns (ProfileExistsResponse);
+
+  // Returns the name of the person associated with the profile, or null.
+  rpc GetDriverName (GetDriverNameRequest) returns (GetDriverNameResponse);
 }
 
 message ProfileExistsRequest {
@@ -14,4 +23,12 @@ message ProfileExistsRequest {
 
 message ProfileExistsResponse {
   bool exists = 1;
+}
+
+message GetDriverNameRequest {
+  string profile_id = 1;
+}
+
+message GetDriverNameResponse {
+  string name = 1;
 }

@@ -4,6 +4,7 @@ using ms_fleet.Api.Application.UseCase.Strategy;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Ports.Out;
 using ms_fleet.Api.Infrastructure.External;
+using ms_fleet.Api.Infrastructure.Grpc;
 using ms_fleet.Api.Infrastructure.Persistence.Context;
 using ms_fleet.Api.Infrastructure.Persistence.Repository;
 using ms_fleet.Api.Infrastructure.Security;
@@ -54,10 +55,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IListBrandsUseCase, ListBrandsService>();
         services.AddScoped<IListModelsUseCase, ListModelsService>();
 
-        // Los perfiles (existe / nombre) los expone ms-user-management en api/profiles,
-        // sin token: ms-iam exige JWT y respondía 401, dejando vacío el conductor.
-        services.AddHttpClient<IIamService, IamService>(client =>
-            client.BaseAddress = new Uri(configuration["Iam:BaseUrl"] ?? "http://ms-user-management:8080"));
+        // Los perfiles (existe / nombre) los expone ms-iam a través de gRPC.
+        // services.AddHttpClient<IIamService, IamService>(client =>
+        //     client.BaseAddress = new Uri(configuration["Iam:BaseUrl"] ?? "http://ms-user-management:8080"));
+        services.AddScoped<IIamService, IamGrpcClient>();
         services.AddScoped<IGpsDeviceService, GpsDeviceService>();
 
         return services;
