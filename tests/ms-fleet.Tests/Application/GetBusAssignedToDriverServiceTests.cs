@@ -1,13 +1,14 @@
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
-using Xunit;
+using NUnit.Framework;
 
 namespace ms_fleet.Api.Tests.Application;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class GetBusAssignedToDriverServiceTests
 {
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithActiveAssignment_ShouldReturnBus()
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
@@ -26,13 +27,13 @@ public class GetBusAssignedToDriverServiceTests
 
         var result = await useCase.ExecuteAsync(profileId);
 
-        Assert.NotNull(result);
-        Assert.Equal(bus.Id, result.Id);
-        Assert.Equal("ABC123", result.Plate);
-        Assert.Equal(bus.CampuseId, result.CampuseId);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo(bus.Id));
+        Assert.That(result.Plate, Is.EqualTo("ABC123"));
+        Assert.That(result.CampuseId, Is.EqualTo(bus.CampuseId));
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithoutAssignment_ShouldReturnNull()
     {
         var useCase = new GetBusAssignedToDriverService(
@@ -41,10 +42,10 @@ public class GetBusAssignedToDriverServiceTests
 
         var result = await useCase.ExecuteAsync(Guid.NewGuid());
 
-        Assert.Null(result);
+        Assert.That(result, Is.Null);
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithInactiveBus_ShouldReturnNull()
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
@@ -63,10 +64,10 @@ public class GetBusAssignedToDriverServiceTests
 
         var result = await useCase.ExecuteAsync(profileId);
 
-        Assert.Null(result);
+        Assert.That(result, Is.Null);
     }
 
-    [Fact]
+    [Test]
     public async Task ExecuteAsync_WithClosedAssignment_ShouldReturnNull()
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
@@ -86,6 +87,6 @@ public class GetBusAssignedToDriverServiceTests
 
         var result = await useCase.ExecuteAsync(profileId);
 
-        Assert.Null(result);
+        Assert.That(result, Is.Null);
     }
 }

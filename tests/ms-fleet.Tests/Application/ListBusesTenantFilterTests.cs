@@ -1,4 +1,4 @@
-using Xunit;
+using NUnit.Framework;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
@@ -6,6 +6,7 @@ using ms_fleet.Api.Tests.Fakes;
 
 namespace ms_fleet.Api.Tests.Application;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class ListBusesTenantFilterTests
 {
     private static readonly Guid CampusA = Guid.Parse("a3000001-0000-4000-8000-000000000001");
@@ -40,17 +41,17 @@ public class ListBusesTenantFilterTests
         return (service, busRepo, campusRepo);
     }
 
-    [Fact]
+    [Test]
     public async Task NoTenant_DoesNotFilter()
     {
         var (service, _, _) = await CreateServiceAsync(new FakeTenantProvider());
 
         var result = await service.ExecuteAsync();
 
-        Assert.Equal(2, result.Count);
+        Assert.That(result.Count, Is.EqualTo(2));
     }
 
-    [Fact]
+    [Test]
     public async Task DriverWithCampus_SeesOnlyItsCampus()
     {
         var (service, _, _) = await CreateServiceAsync(new FakeTenantProvider
@@ -62,11 +63,14 @@ public class ListBusesTenantFilterTests
 
         var result = await service.ExecuteAsync();
 
-        Assert.All(result, bus => Assert.Equal(CampusA, bus.CampuseId));
-        Assert.Single(result);
+        foreach (var bus in result)
+        {
+            Assert.That(bus.CampuseId, Is.EqualTo(CampusA));
+        }
+        Assert.That(result, Has.Exactly(1).Items);
     }
 
-    [Fact]
+    [Test]
     public async Task AdminWithSchool_SeesOnlySchoolCampuses()
     {
         var (service, _, _) = await CreateServiceAsync(new FakeTenantProvider
@@ -78,11 +82,14 @@ public class ListBusesTenantFilterTests
 
         var result = await service.ExecuteAsync();
 
-        Assert.All(result, bus => Assert.Equal(CampusA, bus.CampuseId));
-        Assert.Single(result);
+        foreach (var bus in result)
+        {
+            Assert.That(bus.CampuseId, Is.EqualTo(CampusA));
+        }
+        Assert.That(result, Has.Exactly(1).Items);
     }
 
-    [Fact]
+    [Test]
     public async Task SuperAdmin_DoesNotFilter()
     {
         var (service, _, _) = await CreateServiceAsync(new FakeTenantProvider
@@ -93,6 +100,6 @@ public class ListBusesTenantFilterTests
 
         var result = await service.ExecuteAsync();
 
-        Assert.Equal(2, result.Count);
+        Assert.That(result.Count, Is.EqualTo(2));
     }
 }
