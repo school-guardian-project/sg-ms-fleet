@@ -7,6 +7,8 @@ services:
       dockerfile: src/ms-fleet.Api/Dockerfile
     ports:
       - "8080"
+      # gRPC interno (route.v1.RouteService) h2c, exclusivo para ms-route.
+      - "5001"
     env_file:
       - .env
     networks:
