@@ -38,6 +38,23 @@ public class BusViewFieldsTests
         Assert.That(result.Brand, Is.EqualTo("Mercedes"));
         Assert.That(result.Model, Is.EqualTo("O500"));
         Assert.That(result.DriverName, Is.EqualTo(string.Empty));
+        Assert.That(result.Status, Is.EqualTo("Active"));
+    }
+
+    [Test]
+    public async Task List_WithInactiveBus_ReportsInactiveStatus()
+    {
+        var busRepo = new InMemoryBusRepository();
+        var bus = NewBus(1);
+        bus.Status = Status.Inactive;
+        await busRepo.AddAsync(bus);
+
+        var service = new ListBusesBasicService(
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
+
+        var result = (await service.ExecuteAsync()).Single();
+
+        Assert.That(result.Status, Is.EqualTo("Inactive"));
     }
 
     [Test]
