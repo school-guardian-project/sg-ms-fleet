@@ -7,7 +7,8 @@ public record BusListItemDto(
     Guid CampuseId,
     string DriverName,
     string Brand,
-    string Model);
+    string Model,
+    string Status);
 
 public record BusAssignedDto(
     Guid Id,

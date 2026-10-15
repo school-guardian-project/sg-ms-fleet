@@ -56,7 +56,8 @@ public class ListBusesBasicService : IListBusesBasicUseCase
                 bus.CampuseId,
                 driverName,
                 names?.Brand ?? string.Empty,
-                names?.Model ?? string.Empty));
+                names?.Model ?? string.Empty,
+                bus.Status.ToString()));
         }
 
         return result;
