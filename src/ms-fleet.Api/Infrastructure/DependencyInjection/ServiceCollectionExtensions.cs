@@ -25,6 +25,10 @@ public static class ServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddGatewayAuthentication();
 
+        // Servidor gRPC de route.v1.RouteService (bus para las vistas de ruta
+        // de ms-route). Toda llamada interna debe traer x-internal-api-key.
+        services.AddGrpc(options => options.Interceptors.Add<InternalApiKeyInterceptor>());
+
         services.AddScoped<IBusRepository, BusRepository>();
         services.AddScoped<IDriverAssignmentRepository, DriverAssignmentRepository>();
         services.AddScoped<ICampusReferenceRepository, CampusReferenceRepository>();

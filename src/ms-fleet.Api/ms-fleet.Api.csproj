@@ -20,7 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- ms-iam: ms-fleet is the client of usermanagement.v1.ProfileService. -->
     <Protobuf Include="Protos\profile.proto" GrpcServices="Client" />
+    <!-- ms-route: ms-fleet is the server of route.v1.RouteService. -->
+    <Protobuf Include="Protos\route.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

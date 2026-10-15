@@ -1,4 +1,5 @@
 using ms_fleet.Api.Infrastructure.DependencyInjection;
+using ms_fleet.Api.Infrastructure.Grpc;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Scalar.AspNetCore;
@@ -56,5 +57,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseRateLimiter();
 app.MapControllers();
+
+// Servidor interno route.v1.RouteService (consultas de bus de ms-route).
+// Solo responde sobre el endpoint h2c dedicado que declara .env.example.
+app.MapGrpcService<RouteGrpcService>();
 
 app.Run();
