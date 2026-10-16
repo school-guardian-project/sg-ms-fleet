@@ -1,4 +1,4 @@
-using Xunit;
+using NUnit.Framework;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Application.UseCase.Strategy;
 using ms_fleet.Api.Domain.Model;
@@ -7,6 +7,7 @@ using ms_fleet.Api.Tests.Fakes;
 
 namespace ms_fleet.Api.Tests.Application;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class SearchBusesServiceTests
 {
     private static Bus NewBus(string plate, byte modelId) => new()
@@ -34,7 +35,7 @@ public class SearchBusesServiceTests
         await busRepo.AddAsync(hino);
         busRepo.ModelNames[9] = new ModelNames("Hino", "300");
 
-        var listUseCase = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService());
+        var listUseCase = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
         var service = new SearchBusesService(listUseCase, new IBusSearchStrategy[]
         {
             new PlateSearchStrategy(),
@@ -44,51 +45,51 @@ public class SearchBusesServiceTests
         return (service, mercedes, hino);
     }
 
-    [Fact]
+    [Test]
     public async Task Search_EmptyOrWhitespaceTerm_ReturnsEmpty()
     {
         var (service, _, _) = await CreateServiceAsync();
 
-        Assert.Empty(await service.SearchAsync(string.Empty));
-        Assert.Empty(await service.SearchAsync("   "));
+        Assert.That(await service.SearchAsync(string.Empty), Is.Empty);
+        Assert.That(await service.SearchAsync("   "), Is.Empty);
     }
 
-    [Fact]
+    [Test]
     public async Task Search_PlateShapedTerm_FiltersByPlate()
     {
         var (service, mercedes, hino) = await CreateServiceAsync();
 
         var result = await service.SearchAsync("DEF456");
 
-        Assert.Equal(hino.Id, Assert.Single(result).Id);
+        Assert.That(result.Single().Id, Is.EqualTo(hino.Id));
 
         var lowerCase = await service.SearchAsync("abc123");
 
-        Assert.Equal(mercedes.Id, Assert.Single(lowerCase).Id);
+        Assert.That(lowerCase.Single().Id, Is.EqualTo(mercedes.Id));
     }
 
-    [Fact]
+    [Test]
     public async Task Search_GenericTerm_FiltersByBrandModelAndDriver()
     {
         var (service, mercedes, hino) = await CreateServiceAsync();
 
         var byBrand = await service.SearchAsync("mercedes");
-        Assert.Equal(mercedes.Id, Assert.Single(byBrand).Id);
+        Assert.That(byBrand.Single().Id, Is.EqualTo(mercedes.Id));
 
         var byModel = await service.SearchAsync("300");
-        Assert.Equal(hino.Id, Assert.Single(byModel).Id);
+        Assert.That(byModel.Single().Id, Is.EqualTo(hino.Id));
 
         var byDriver = await service.SearchAsync("Test Driver");
-        Assert.Equal(mercedes.Id, Assert.Single(byDriver).Id);
+        Assert.That(byDriver.Single().Id, Is.EqualTo(mercedes.Id));
     }
 
-    [Fact]
+    [Test]
     public async Task Search_CatchAllTerm_IsCaseInsensitive()
     {
         var (service, _, hino) = await CreateServiceAsync();
 
         var result = await service.SearchAsync("hInO");
 
-        Assert.Equal(hino.Id, Assert.Single(result).Id);
+        Assert.That(result.Single().Id, Is.EqualTo(hino.Id));
     }
 }

@@ -7,7 +7,13 @@ public record BusListItemDto(
     Guid CampuseId,
     string DriverName,
     string Brand,
-    string Model);
+    string Model,
+    string Status);
+
+public record BusAssignedDto(
+    Guid Id,
+    string Plate,
+    Guid CampuseId);
 
 public record BusAssignedDto(
     Guid Id,
@@ -25,4 +31,9 @@ public record BusDetailDto(
     string Status,
     string DriverName,
     string Brand,
-    string Model);
+    string Model,
+    string GpsImei = "",
+    bool? GpsStatus = null,
+    Guid? DriverProfileId = null);
+
+public record GpsDeviceDto(Guid Id, string Imei, bool GpsStatus, Guid? AssignedBusId, string AssignedPlate);

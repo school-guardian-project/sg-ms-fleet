@@ -10,11 +10,20 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.2.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.84.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.84.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.84.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.17.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ms-iam: ms-fleet is the client of usermanagement.v1.ProfileService. -->
+    <Protobuf Include="Protos\profile.proto" GrpcServices="Client" />
+    <!-- ms-route: ms-fleet is the server of route.v1.RouteService. -->
+    <Protobuf Include="Protos\route.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>
