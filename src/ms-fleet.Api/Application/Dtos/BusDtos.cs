@@ -15,11 +15,6 @@ public record BusAssignedDto(
     string Plate,
     Guid CampuseId);
 
-public record BusAssignedDto(
-    Guid Id,
-    string Plate,
-    Guid CampuseId);
-
 public record BusDetailDto(
     Guid Id,
     string Plate,
