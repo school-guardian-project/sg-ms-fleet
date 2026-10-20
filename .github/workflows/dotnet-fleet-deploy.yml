@@ -15,6 +15,6 @@ jobs:
     uses: school-guardian-project/.github/.github/workflows/deploy-dotnet.yml@main
     with:
       dockerfile_path: 'src/ms-fleet.Api/Dockerfile'
-      app_name: 'fleet-app'
+      app_name: 'ms-fleet'
       host_port: 8080
     secrets: inherit
