@@ -7,11 +7,6 @@ using VehicleModel = ms_fleet.Api.Domain.Model.Model;
 
 namespace ms_fleet.Api.Domain.Ports.Out;
 
-public interface IBrandRepository
-{
-    Task<List<Brand>> ListActiveAsync(CancellationToken ct);
-}
-
 public interface IModelRepository
 {
     Task<List<VehicleModel>> ListActiveAsync(byte? brandId, CancellationToken ct);

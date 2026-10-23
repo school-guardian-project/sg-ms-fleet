@@ -1,4 +1,5 @@
 using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Ports.Out;
@@ -26,6 +27,6 @@ public class GetBusAssignedToDriverService : IGetBusAssignedToDriverUseCase
         var bus = await _busRepository.GetByIdAsync(assignment.BusId, ct);
         if (bus is null || bus.Status != Status.Active) return null;
 
-        return new BusAssignedDto(bus.Id, bus.Plate, bus.CampuseId);
+        return BusMapper.ToAssigned(bus);
     }
 }

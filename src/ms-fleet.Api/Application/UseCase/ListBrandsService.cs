@@ -1,4 +1,5 @@
 using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Ports.Out;
 
@@ -16,6 +17,6 @@ public class ListBrandsService : IListBrandsUseCase
     public async Task<List<BrandListDto>> ExecuteAsync(CancellationToken ct)
     {
         var brands = await _brandRepository.ListActiveAsync(ct);
-        return brands.Select(b => new BrandListDto(b.Id, b.Name ?? "")).ToList();
+        return brands.Select(VehicleTypeMapper.ToBrandList).ToList();
     }
 }

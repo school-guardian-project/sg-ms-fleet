@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
-using ms_fleet.Api.Infrastructure.Persistence;
 using ms_fleet.Api.Infrastructure.Persistence.Context;
 
 // `Model` colisiona con el namespace `ms_fleet.Api.Domain.Model`: sin alias el
