@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using ms_fleet.Api.Application.Dtos;
 using ms_fleet.Api.Domain.Ports.In;
+using ms_fleet.Api.Infrastructure.Security;
 
 namespace ms_fleet.Api.Infrastructure.Controller;
 
 [ApiController]
 [Route("api/vehicle-types")]
+[RequireProfile]
 public class VehicleTypeController : ControllerBase
 {
     private readonly IListBrandsUseCase _listBrandsUseCase;

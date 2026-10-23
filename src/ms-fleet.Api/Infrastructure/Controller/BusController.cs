@@ -4,11 +4,13 @@ using ms_fleet.Api.Application.Dtos;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.In;
+using ms_fleet.Api.Infrastructure.Security;
 
 namespace ms_fleet.Api.Infrastructure.Controller;
 
 [ApiController]
 [Route("api/buses")]
+[RequireProfile]
 public class BusController : ControllerBase
 {
     private readonly ICreateBusUseCase _createBusUseCase;
@@ -48,6 +50,7 @@ public class BusController : ControllerBase
 
     [EnableRateLimiting("writes")]
     [HttpPost]
+    [RequirePermission("buses.manage")]
     public async Task<IActionResult> Create([FromBody] CreateBusRequest request, CancellationToken ct)
     {
         try
@@ -65,6 +68,7 @@ public class BusController : ControllerBase
 
     [EnableRateLimiting("writes")]
     [HttpPut("{id:guid}")]
+    [RequirePermission("buses.manage")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBusRequest request, CancellationToken ct)
     {
         try
@@ -86,6 +90,7 @@ public class BusController : ControllerBase
 
     [EnableRateLimiting("writes")]
     [HttpPatch("{id:guid}/status")]
+    [RequirePermission("buses.manage")]
     public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeStatusRequest request, CancellationToken ct)
     {
         if (!Enum.TryParse<Status>(request.Status, out var status))
@@ -125,6 +130,7 @@ public class BusController : ControllerBase
 
     [EnableRateLimiting("writes")]
     [HttpDelete("{id:guid}")]
+    [RequirePermission("buses.manage")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         await _deleteBusUseCase.ExecuteAsync(id, ct);
@@ -133,6 +139,7 @@ public class BusController : ControllerBase
 
     [EnableRateLimiting("writes")]
     [HttpPut("{busId:guid}/driver")]
+    [RequirePermission("drivers.manage")]
     public async Task<IActionResult> AssignDriver(Guid busId, [FromBody] AssignDriverRequest request, CancellationToken ct)
     {
         try
@@ -149,6 +156,7 @@ public class BusController : ControllerBase
 
     [EnableRateLimiting("writes")]
     [HttpDelete("{busId:guid}/driver")]
+    [RequirePermission("drivers.manage")]
     public async Task<IActionResult> UnassignDriver(Guid busId, CancellationToken ct)
     {
         try
