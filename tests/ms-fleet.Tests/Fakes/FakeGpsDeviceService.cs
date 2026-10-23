@@ -1,3 +1,4 @@
+using ms_fleet.Api.Application.Dtos;
 using ms_fleet.Api.Domain.Ports.Out;
 
 namespace ms_fleet.Api.Tests.Fakes;

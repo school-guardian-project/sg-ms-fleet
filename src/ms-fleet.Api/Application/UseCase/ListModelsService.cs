@@ -1,4 +1,5 @@
 using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Ports.Out;
 
@@ -21,7 +22,7 @@ public class ListModelsService : IListModelsUseCase
         foreach (var model in models)
         {
             var brandName = await _modelRepository.GetBrandNameAsync(model.BrandId, ct);
-            result.Add(new ModelListDto(model.Id, model.Name ?? "", model.BrandId, brandName ?? ""));
+            result.Add(VehicleTypeMapper.ToModelList(model, brandName));
         }
         
         return result;

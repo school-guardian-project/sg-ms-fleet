@@ -1,5 +1,6 @@
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
 
@@ -40,20 +41,6 @@ public class GetBusDetailService : IGetBusDetailUseCase
         var gps = await _gpsDeviceService.GetAsync(bus.GpsDeviceId, ct);
         var names = await _busRepository.GetModelNamesAsync(bus.ModelId, ct);
 
-        return new BusDetailDto(
-            bus.Id,
-            bus.Plate,
-            bus.CampuseId,
-            bus.SoatValidity,
-            bus.GpsDeviceId,
-            bus.Capacity,
-            bus.ModelId,
-            bus.Status.ToString(),
-            driverName,
-            names?.Brand ?? string.Empty,
-            names?.Model ?? string.Empty,
-            gps?.Imei ?? string.Empty,
-            gps?.GpsStatus,
-            assignment?.ProfileId);
+        return BusMapper.ToDetail(bus, driverName, names, gps, assignment?.ProfileId);
     }
 }
