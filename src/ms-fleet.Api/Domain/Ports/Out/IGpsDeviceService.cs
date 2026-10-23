@@ -1,3 +1,5 @@
+using ms_fleet.Api.Application.Dtos;
+
 namespace ms_fleet.Api.Domain.Ports.Out;
 
 public record GpsDeviceInfo(Guid Id, string Imei, bool GpsStatus, Guid? AssignedBusId, string AssignedPlate);

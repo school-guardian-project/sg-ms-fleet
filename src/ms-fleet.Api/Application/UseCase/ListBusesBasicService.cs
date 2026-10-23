@@ -1,5 +1,6 @@
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
 
@@ -50,14 +51,7 @@ public class ListBusesBasicService : IListBusesBasicUseCase
                 modelNames[bus.ModelId] = names;
             }
 
-            result.Add(new BusListItemDto(
-                bus.Id,
-                bus.Plate,
-                bus.CampuseId,
-                driverName,
-                names?.Brand ?? string.Empty,
-                names?.Model ?? string.Empty,
-                bus.Status.ToString()));
+            result.Add(BusMapper.ToListItem(bus, driverName, names));
         }
 
         return result;

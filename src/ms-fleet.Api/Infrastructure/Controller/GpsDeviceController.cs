@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Ports.Out;
 
 namespace ms_fleet.Api.Infrastructure.Controller;
@@ -20,6 +20,6 @@ public class GpsDeviceController : ControllerBase
     public async Task<IActionResult> List(CancellationToken ct)
     {
         var devices = await _gpsDeviceService.ListAsync(ct);
-        return Ok(devices.Select(d => new GpsDeviceDto(d.Id, d.Imei, d.GpsStatus, d.AssignedBusId, d.AssignedPlate)));
+        return Ok(GpsDeviceMapper.ToDtos(devices));
     }
 }

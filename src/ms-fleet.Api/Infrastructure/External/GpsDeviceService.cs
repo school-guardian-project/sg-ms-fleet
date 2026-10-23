@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ms_fleet.Api.Application.Dtos;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
 using ms_fleet.Api.Infrastructure.Persistence.Context;

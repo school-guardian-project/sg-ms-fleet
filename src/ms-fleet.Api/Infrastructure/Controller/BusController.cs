@@ -162,38 +162,4 @@ public class BusController : ControllerBase
 
         return NoContent();
     }
-
-    public class CreateBusRequest
-    {
-        public Guid CampuseId { get; set; }
-        public DateTime SoatValidity { get; set; }
-        public Guid GpsDeviceId { get; set; }
-        public byte Capacity { get; set; }
-        public string Plate { get; set; } = string.Empty;
-        public int ModelId { get; set; }
-        public bool? GpsStatus { get; set; }
-        public string? GpsImei { get; set; }
-    }
-
-    public class UpdateBusRequest
-    {
-        public Guid CampuseId { get; set; }
-        public DateTime SoatValidity { get; set; }
-        public byte Capacity { get; set; }
-        public int ModelId { get; set; }
-        public string? Plate { get; set; }
-        public Guid? GpsDeviceId { get; set; }
-        public bool? GpsStatus { get; set; }
-        public string? GpsImei { get; set; }
-    }
-
-    public class ChangeStatusRequest
-    {
-        public string Status { get; set; } = string.Empty;
-    }
-
-    public class AssignDriverRequest
-    {
-        public Guid ProfileId { get; set; }
-    }
 }
