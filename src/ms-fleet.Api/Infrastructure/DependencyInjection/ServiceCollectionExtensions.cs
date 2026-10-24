@@ -23,6 +23,9 @@ public static class ServiceCollectionExtensions
             poolSize: 32);
 
         services.AddHttpContextAccessor();
+        services.AddMemoryCache();
+        services.AddHttpClient();
+        services.AddSingleton<JwksCache>();
         services.AddGatewayAuthentication();
 
         // Servidor gRPC de route.v1.RouteService (bus para las vistas de ruta
