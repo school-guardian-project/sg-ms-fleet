@@ -3,11 +3,11 @@ using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Application.UseCase.Strategy;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Ports.Out;
+using ms_fleet.Api.Infrastructure.Auth;
 using ms_fleet.Api.Infrastructure.External;
 using ms_fleet.Api.Infrastructure.Grpc;
 using ms_fleet.Api.Infrastructure.Persistence.Context;
 using ms_fleet.Api.Infrastructure.Persistence.Repository;
-using ms_fleet.Api.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace ms_fleet.Api.Infrastructure.DependencyInjection;
