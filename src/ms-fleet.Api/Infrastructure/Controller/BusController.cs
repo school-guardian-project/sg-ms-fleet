@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Application.UseCase;
-using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.In;
 
 namespace ms_fleet.Api.Infrastructure.Controller;
@@ -48,14 +48,12 @@ public class BusController : ControllerBase
 
     [EnableRateLimiting("writes")]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateBusRequest request, CancellationToken ct)
+    public async Task<ActionResult<CreateBusResponse>> Create([FromBody] CreateBusRequest request, CancellationToken ct)
     {
         try
         {
-            var busId = await _createBusUseCase.ExecuteAsync(
-                request.CampuseId, request.SoatValidity, request.GpsDeviceId,
-                request.Capacity, request.Plate, request.ModelId, request.GpsStatus, request.GpsImei, ct);
-            return Ok(busId);
+            var response = await _createBusUseCase.ExecuteAsync(request, ct);
+            return Ok(response);
         }
         catch (ArgumentException ex)
         {
@@ -69,9 +67,7 @@ public class BusController : ControllerBase
     {
         try
         {
-            await _updateBusUseCase.ExecuteAsync(
-                id, request.CampuseId, request.SoatValidity, request.Capacity, request.ModelId,
-                request.Plate, request.GpsDeviceId, request.GpsStatus, request.GpsImei, ct);
+            await _updateBusUseCase.ExecuteAsync(id, request, ct);
         }
         catch (ArgumentException ex)
         {
@@ -88,36 +84,45 @@ public class BusController : ControllerBase
     [HttpPatch("{id:guid}/status")]
     public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeStatusRequest request, CancellationToken ct)
     {
-        if (!Enum.TryParse<Status>(request.Status, out var status))
-            return BadRequest("Invalid status");
-
-        await _changeBusStatusUseCase.ExecuteAsync(id, status, ct);
+        try
+        {
+            await _changeBusStatusUseCase.ExecuteAsync(id, request, ct);
+        }
+        catch (ArgumentException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status404NotFound);
+        }
         return NoContent();
     }
 
     [HttpGet]
-    public async Task<IActionResult> ListBasic(CancellationToken ct)
+    public async Task<ActionResult<IReadOnlyList<BusListItemResponse>>> ListBasic(CancellationToken ct)
     {
         var buses = await _listBusesBasicUseCase.ExecuteAsync(ct);
         return Ok(buses);
     }
 
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string? search, CancellationToken ct)
+    public async Task<ActionResult<IReadOnlyList<BusListItemResponse>>> Search([FromQuery] string? search, CancellationToken ct)
     {
-        var buses = await _searchBusesService.SearchAsync(search, ct);
+        var request = new SearchBusesRequest { SearchTerm = search };
+        var buses = await _searchBusesService.SearchAsync(request, ct);
         return Ok(buses);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetDetail(Guid id, CancellationToken ct)
+    public async Task<ActionResult<BusDetailResponse>> GetDetail(Guid id, CancellationToken ct)
     {
         var bus = await _getBusDetailUseCase.ExecuteAsync(id, ct);
         return bus is null ? NotFound() : Ok(bus);
     }
 
     [HttpGet("assigned/{profileId:guid}")]
-    public async Task<IActionResult> GetAssignedToDriver(Guid profileId, CancellationToken ct)
+    public async Task<ActionResult<BusAssignedResponse>> GetAssignedToDriver(Guid profileId, CancellationToken ct)
     {
         var bus = await _getBusAssignedToDriverUseCase.ExecuteAsync(profileId, ct);
         return bus is null ? NotFound() : Ok(bus);
@@ -137,7 +142,7 @@ public class BusController : ControllerBase
     {
         try
         {
-            await _assignDriverUseCase.ExecuteAsync(busId, request.ProfileId, ct);
+            await _assignDriverUseCase.ExecuteAsync(busId, request, ct);
         }
         catch (InvalidOperationException ex)
         {

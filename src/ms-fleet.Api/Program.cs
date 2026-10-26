@@ -1,4 +1,4 @@
-using ms_fleet.Api.Infrastructure.Auth;
+using ms_fleet.Api.Infrastructure.Security;
 using ms_fleet.Api.Infrastructure.DependencyInjection;
 using ms_fleet.Api.Infrastructure.Grpc;
 using System.Threading.RateLimiting;

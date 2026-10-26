@@ -1,3 +1,4 @@
+using ms_fleet.Api.Application.Dto.Request;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
@@ -13,8 +14,11 @@ public class ChangeBusStatusService : IChangeBusStatusUseCase
         _busRepository = busRepository;
     }
 
-    public async Task ExecuteAsync(Guid busId, Status status, CancellationToken ct = default)
+    public async Task ExecuteAsync(Guid busId, ChangeStatusRequest request, CancellationToken ct = default)
     {
+        if (!Enum.TryParse<Status>(request.Status, true, out var status))
+            throw new ArgumentException($"Invalid status: {request.Status}");
+
         var bus = await _busRepository.GetByIdAsync(busId, ct)
             ?? throw new InvalidOperationException("Bus not found");
 

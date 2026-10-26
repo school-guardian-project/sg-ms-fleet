@@ -1,4 +1,4 @@
-using ms_fleet.Api.Domain.Model;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Application.UseCase.Strategy;
 using ms_fleet.Api.Domain.Ports.In;
@@ -33,6 +33,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDriverAssignmentRepository, DriverAssignmentRepository>();
         services.AddScoped<ICampusReferenceRepository, CampusReferenceRepository>();
         services.AddScoped<ITenantProvider, HttpContextTenantProvider>();
+
+        // Mappers (stateless, singleton)
+        services.AddSingleton<IBusMapper, BusMapper>();
+        services.AddSingleton<IVehicleTypeMapper, VehicleTypeMapper>();
+        services.AddSingleton<IGpsDeviceMapper, GpsDeviceMapper>();
+        services.AddSingleton<IBusRequestMapper, BusRequestMapper>();
 
         services.AddScoped<ICreateBusUseCase, CreateBusService>();
         services.AddScoped<IUpdateBusUseCase, UpdateBusService>();

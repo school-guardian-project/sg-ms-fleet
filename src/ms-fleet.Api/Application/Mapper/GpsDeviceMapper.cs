@@ -1,15 +1,23 @@
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Dto.Response;
+using ms_fleet.Api.Domain.Model;
 
 namespace ms_fleet.Api.Application.Mapper;
 
 /// <summary>
-/// Mapeos de dispositivos GPS a DTO de respuesta.
+/// Maps GPS device domain entities to Response DTOs.
+/// This mapper is stateless and can be registered as a singleton.
 /// </summary>
-public static class GpsDeviceMapper
+public interface IGpsDeviceMapper
 {
-    public static GpsDeviceDto ToDto(GpsDeviceInfo device)
+    GpsDeviceResponse ToResponse(GpsDeviceInfo device);
+    IEnumerable<GpsDeviceResponse> ToResponses(IEnumerable<GpsDeviceInfo> devices);
+}
+
+public sealed class GpsDeviceMapper : IGpsDeviceMapper
+{
+    public GpsDeviceResponse ToResponse(GpsDeviceInfo device)
         => new(device.Id, device.Imei, device.GpsStatus, device.AssignedBusId, device.AssignedPlate);
 
-    public static IEnumerable<GpsDeviceDto> ToDtos(IEnumerable<GpsDeviceInfo> devices)
-        => devices.Select(ToDto);
+    public IEnumerable<GpsDeviceResponse> ToResponses(IEnumerable<GpsDeviceInfo> devices)
+        => devices.Select(ToResponse);
 }
