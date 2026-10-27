@@ -1,9 +1,8 @@
-using ms_fleet.Api.Domain.Model;
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Dto.Response;
 
 namespace ms_fleet.Api.Domain.Ports.In;
 
 public interface IListBusesBasicUseCase
 {
-    Task<IReadOnlyList<BusListItemDto>> ExecuteAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<BusListItemResponse>> ExecuteAsync(CancellationToken ct = default);
 }

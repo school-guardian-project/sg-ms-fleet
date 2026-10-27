@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Domain.Ports.Out;
 
 namespace ms_fleet.Api.Application.UseCase.Strategy;
@@ -14,7 +14,7 @@ public class PlateSearchStrategy : IBusSearchStrategy
         return PlateShape.IsMatch(search);
     }
 
-    public bool Matches(BusListItemDto bus, string search)
+    public bool Matches(BusListItemResponse bus, string search)
     {
         return bus.Plate.Contains(search, StringComparison.OrdinalIgnoreCase);
     }

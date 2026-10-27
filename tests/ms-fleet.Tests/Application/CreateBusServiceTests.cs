@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
@@ -13,13 +15,11 @@ public class CreateBusServiceTests
     {
         var repo = new InMemoryBusRepository();
         var gpsService = new FakeGpsDeviceService();
-        var useCase = new CreateBusService(repo, gpsService);
+        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper());
 
-        var busId = await useCase.ExecuteAsync(
-            Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
-            40, "ABC123", 1);
+        var response = await useCase.ExecuteAsync(NewRequest(capacity: 40, plate: "ABC123", modelId: 1));
 
-        Assert.That(busId, Is.Not.EqualTo(Guid.Empty));
+        Assert.That(response.BusId, Is.Not.EqualTo(Guid.Empty));
     }
 
     [Test]
@@ -27,16 +27,12 @@ public class CreateBusServiceTests
     {
         var repo = new InMemoryBusRepository();
         var gpsService = new FakeGpsDeviceService();
-        var useCase = new CreateBusService(repo, gpsService);
+        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper());
 
-        await useCase.ExecuteAsync(
-            Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
-            40, "ABC123", 1);
+        await useCase.ExecuteAsync(NewRequest(capacity: 40, plate: "ABC123", modelId: 1));
 
         Assert.ThrowsAsync<ArgumentException>(() =>
-            useCase.ExecuteAsync(
-                Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
-                40, "ABC123", 1));
+            useCase.ExecuteAsync(NewRequest(capacity: 40, plate: "ABC123", modelId: 1)));
     }
 
     [Test]
@@ -44,11 +40,19 @@ public class CreateBusServiceTests
     {
         var repo = new InMemoryBusRepository();
         var gpsService = new FakeGpsDeviceService();
-        var useCase = new CreateBusService(repo, gpsService);
+        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper());
 
         Assert.ThrowsAsync<ArgumentException>(() =>
-            useCase.ExecuteAsync(
-                Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
-                0, "ABC123", 1));
+            useCase.ExecuteAsync(NewRequest(capacity: 0, plate: "ABC123", modelId: 1)));
     }
+
+    private static CreateBusRequest NewRequest(byte capacity, string plate, int modelId) => new()
+    {
+        CampuseId = Guid.NewGuid(),
+        SoatValidity = DateTime.UtcNow.AddYears(1),
+        GpsDeviceId = Guid.NewGuid(),
+        Capacity = capacity,
+        Plate = plate,
+        ModelId = modelId,
+    };
 }

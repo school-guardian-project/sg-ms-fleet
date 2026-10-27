@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
-using ms_fleet.Api.Application.Dtos;
+using AppDto = ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Infrastructure.Grpc;
 using NUnit.Framework;
@@ -17,17 +17,17 @@ public class RouteGrpcServiceTests
 
     private sealed class StubBusAssigned : IGetBusAssignedToDriverUseCase
     {
-        public BusAssignedDto? Result { get; set; }
+        public AppDto.BusAssignedResponse? Result { get; set; }
 
-        public Task<BusAssignedDto?> ExecuteAsync(Guid profileId, CancellationToken ct = default)
+        public Task<AppDto.BusAssignedResponse?> ExecuteAsync(Guid profileId, CancellationToken ct = default)
             => Task.FromResult(Result);
     }
 
     private sealed class StubBusDetail : IGetBusDetailUseCase
     {
-        public BusDetailDto? Result { get; set; }
+        public AppDto.BusDetailResponse? Result { get; set; }
 
-        public Task<BusDetailDto?> ExecuteAsync(Guid busId, CancellationToken ct = default)
+        public Task<AppDto.BusDetailResponse?> ExecuteAsync(Guid busId, CancellationToken ct = default)
             => Task.FromResult(Result);
     }
 
@@ -41,7 +41,7 @@ public class RouteGrpcServiceTests
     [Test]
     public async Task GetBusAssignedToDriver_WithAssignment_ReturnsBusIdAndPlate()
     {
-        _assigned.Result = new BusAssignedDto(BusId, "ABC123", Guid.NewGuid());
+        _assigned.Result = new AppDto.BusAssignedResponse(BusId, "ABC123", Guid.NewGuid());
 
         var result = await CreateService().GetBusAssignedToDriver(
             new GetBusAssignedToDriverRequest { ProfileId = ProfileId.ToString() }, Context());
@@ -75,7 +75,7 @@ public class RouteGrpcServiceTests
     [Test]
     public async Task GetBusDetails_WithBus_ReturnsPlateCapacityAndDriver()
     {
-        _detail.Result = new BusDetailDto(
+        _detail.Result = new AppDto.BusDetailResponse(
             BusId, "ABC123", Guid.NewGuid(), DateTime.UtcNow.AddYears(1), Guid.NewGuid(),
             Capacity: 40, ModelId: 1, Status: "Active", DriverName: "Juan Perez",
             Brand: "Marc", Model: "Urbano", GpsImei: "123456789", GpsStatus: true,
@@ -94,7 +94,7 @@ public class RouteGrpcServiceTests
     [Test]
     public async Task GetBusDetails_WithoutDriver_LeavesDriverProfileEmpty()
     {
-        _detail.Result = new BusDetailDto(
+        _detail.Result = new AppDto.BusDetailResponse(
             BusId, "ABC123", Guid.NewGuid(), DateTime.UtcNow, Guid.NewGuid(),
             Capacity: 40, ModelId: 1, Status: "Active", DriverName: string.Empty,
             Brand: string.Empty, Model: string.Empty);

@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
@@ -36,7 +38,7 @@ public class ListBusesTenantFilterTests
         campusRepo.CampusIdsBySchool[SchoolX] = [CampusA];
 
         var service = new ListBusesBasicService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), tenant, campusRepo);
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), tenant, campusRepo, new BusMapper());
 
         return (service, busRepo, campusRepo);
     }

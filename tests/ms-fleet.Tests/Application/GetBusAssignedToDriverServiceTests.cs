@@ -1,3 +1,5 @@
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
@@ -13,7 +15,7 @@ public class GetBusAssignedToDriverServiceTests
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var busRepo = new InMemoryBusRepository();
-        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo);
+        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper(), AccessPolicies.SuperAdmin());
 
         var profileId = Guid.NewGuid();
         var bus = new Bus { Plate = "ABC123", CampuseId = Guid.NewGuid(), Status = Status.Active };
@@ -38,7 +40,8 @@ public class GetBusAssignedToDriverServiceTests
     {
         var useCase = new GetBusAssignedToDriverService(
             new InMemoryDriverAssignmentRepository(),
-            new InMemoryBusRepository());
+            new InMemoryBusRepository(),
+            new BusMapper(), AccessPolicies.SuperAdmin());
 
         var result = await useCase.ExecuteAsync(Guid.NewGuid());
 
@@ -50,7 +53,7 @@ public class GetBusAssignedToDriverServiceTests
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var busRepo = new InMemoryBusRepository();
-        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo);
+        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper(), AccessPolicies.SuperAdmin());
 
         var profileId = Guid.NewGuid();
         var bus = new Bus { Plate = "XYZ789", Status = Status.Inactive };
@@ -72,7 +75,7 @@ public class GetBusAssignedToDriverServiceTests
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var busRepo = new InMemoryBusRepository();
-        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo);
+        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper(), AccessPolicies.SuperAdmin());
 
         var profileId = Guid.NewGuid();
         var bus = new Bus { Plate = "DEF456", Status = Status.Active };

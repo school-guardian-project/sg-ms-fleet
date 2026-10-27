@@ -1,4 +1,4 @@
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Domain.Model;
 
 namespace ms_fleet.Api.Domain.Ports.Out;
 
