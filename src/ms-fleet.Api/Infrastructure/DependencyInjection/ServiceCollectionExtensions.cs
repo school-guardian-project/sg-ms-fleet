@@ -48,7 +48,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDeleteBusUseCase, DeleteBusService>();
         services.AddScoped<IListBusesBasicUseCase, ListBusesBasicService>();
         services.AddScoped<IGetBusDetailUseCase, GetBusDetailService>();
-        services.AddScoped<IGetBusAssignedToDriverUseCase, GetBusAssignedToDriverService>();
+        // El gRPC interno usa la consulta sin politica (no trae usuario); REST la
+        // recibe decorada con la politica de acceso.
+        services.AddScoped<IFindBusAssignedToDriverQuery, GetBusAssignedToDriverService>();
+        services.AddScoped<IGetBusAssignedToDriverUseCase, AuthorizedGetBusAssignedToDriverService>();
         services.AddScoped<IAssignDriverToBusUseCase, AssignDriverToBusService>();
         services.AddScoped<IUnassignDriverFromBusUseCase, UnassignDriverFromBusService>();
 

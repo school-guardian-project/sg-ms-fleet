@@ -15,7 +15,7 @@ public class RouteGrpcServiceTests
     private static readonly Guid ProfileId = Guid.NewGuid();
     private static readonly Guid BusId = Guid.NewGuid();
 
-    private sealed class StubBusAssigned : IGetBusAssignedToDriverUseCase
+    private sealed class StubBusAssigned : IFindBusAssignedToDriverQuery
     {
         public AppDto.BusAssignedResponse? Result { get; set; }
 

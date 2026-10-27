@@ -16,7 +16,7 @@ public class AssignDriverToBusServiceTests
         var busRepo = new InMemoryBusRepository();
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var iamService = new FakeIamService();
-        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService);
+        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService, AccessPolicies.SuperAdmin());
 
         var bus = new Bus { Plate = "ABC123", Status = Status.Active };
         await busRepo.AddAsync(bus);
@@ -33,7 +33,7 @@ public class AssignDriverToBusServiceTests
         var busRepo = new InMemoryBusRepository();
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var iamService = new FakeIamService();
-        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService);
+        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService, AccessPolicies.SuperAdmin());
 
         var bus = new Bus { Plate = "ABC123", Status = Status.Inactive };
         await busRepo.AddAsync(bus);
@@ -48,7 +48,7 @@ public class AssignDriverToBusServiceTests
         var busRepo = new InMemoryBusRepository();
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var iamService = new FakeIamService();
-        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService);
+        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService, AccessPolicies.SuperAdmin());
 
         var bus1 = new Bus { Plate = "ABC123", Status = Status.Active };
         var bus2 = new Bus { Plate = "DEF456", Status = Status.Active };
@@ -68,7 +68,7 @@ public class AssignDriverToBusServiceTests
         var busRepo = new InMemoryBusRepository();
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var iamService = new FakeIamService();
-        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService);
+        var useCase = new AssignDriverToBusService(busRepo, assignmentRepo, iamService, AccessPolicies.SuperAdmin());
 
         var bus = new Bus { Plate = "ABC123", Status = Status.Active };
         await busRepo.AddAsync(bus);

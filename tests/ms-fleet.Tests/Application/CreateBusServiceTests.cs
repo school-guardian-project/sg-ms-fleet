@@ -15,7 +15,7 @@ public class CreateBusServiceTests
     {
         var repo = new InMemoryBusRepository();
         var gpsService = new FakeGpsDeviceService();
-        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper());
+        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper(), AccessPolicies.SuperAdmin());
 
         var response = await useCase.ExecuteAsync(NewRequest(capacity: 40, plate: "ABC123", modelId: 1));
 
@@ -27,7 +27,7 @@ public class CreateBusServiceTests
     {
         var repo = new InMemoryBusRepository();
         var gpsService = new FakeGpsDeviceService();
-        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper());
+        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper(), AccessPolicies.SuperAdmin());
 
         await useCase.ExecuteAsync(NewRequest(capacity: 40, plate: "ABC123", modelId: 1));
 
@@ -40,7 +40,7 @@ public class CreateBusServiceTests
     {
         var repo = new InMemoryBusRepository();
         var gpsService = new FakeGpsDeviceService();
-        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper());
+        var useCase = new CreateBusService(repo, gpsService, new BusRequestMapper(), AccessPolicies.SuperAdmin());
 
         Assert.ThrowsAsync<ArgumentException>(() =>
             useCase.ExecuteAsync(NewRequest(capacity: 0, plate: "ABC123", modelId: 1)));
