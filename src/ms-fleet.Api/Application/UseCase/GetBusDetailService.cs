@@ -1,3 +1,4 @@
+using ms_fleet.Api.Application.Security;
 using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Ports.In;
@@ -13,14 +14,17 @@ public class GetBusDetailService : IGetBusDetailUseCase
     private readonly IIamService _iamService;
     private readonly IGpsDeviceService _gpsDeviceService;
     private readonly IBusMapper _busMapper;
+    private readonly BusAccessPolicy _accessPolicy;
 
     public GetBusDetailService(
         IBusRepository busRepository,
         IDriverAssignmentRepository assignmentRepository,
         IIamService iamService,
         IGpsDeviceService gpsDeviceService,
-        IBusMapper busMapper)
+        IBusMapper busMapper,
+        BusAccessPolicy accessPolicy)
     {
+        _accessPolicy = accessPolicy;
         _busRepository = busRepository;
         _assignmentRepository = assignmentRepository;
         _iamService = iamService;
@@ -31,7 +35,8 @@ public class GetBusDetailService : IGetBusDetailUseCase
     public async Task<BusDetailResponse?> ExecuteAsync(Guid busId, CancellationToken ct = default)
     {
         var bus = await _busRepository.GetByIdAsync(busId, ct);
-        if (bus is null) return null;
+        // Un bus de otro colegio responde igual que uno inexistente (no revela que existe).
+        if (bus is null || !await _accessPolicy.CanSeeBusAsync(bus, ct)) return null;
 
         var assignment = await _assignmentRepository.GetActiveByBusIdAsync(busId, ct);
         string driverName = string.Empty;

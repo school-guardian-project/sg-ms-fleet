@@ -1,3 +1,4 @@
+using ms_fleet.Api.Application.Security;
 using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Ports.In;
@@ -61,19 +62,8 @@ public class ListBusesBasicService : IListBusesBasicUseCase
     }
 
     /// <summary>
-    /// Resuelve las sedes permitidas para el tenant actual; null = sin filtro (anónimo, llamada interna o SuperAdmin).
-    /// Admin (roleId 1): todas las sedes de su colegio. Student/Driver/Parent (2/3/4): solo su sede.
+    /// Sedes permitidas para el tenant actual; null = sin filtro (SuperAdmin o token sin tenant).
     /// </summary>
-    private async Task<IReadOnlyCollection<Guid>?> ResolveCampusFilterAsync(CancellationToken ct)
-    {
-        if (!_tenantProvider.ShouldFilter) return null;
-
-        if (_tenantProvider.RoleId == 1 && _tenantProvider.SchoolId is { } schoolId)
-            return await _campusReferenceRepository.GetCampusIdsBySchoolAsync(schoolId, ct);
-
-        if (_tenantProvider.CampusId is { } campusId)
-            return [campusId];
-
-        return null;
-    }
+    private Task<IReadOnlyCollection<Guid>?> ResolveCampusFilterAsync(CancellationToken ct) =>
+        new BusTenantScope(_tenantProvider, _campusReferenceRepository).GetVisibleCampusIdsAsync(ct);
 }

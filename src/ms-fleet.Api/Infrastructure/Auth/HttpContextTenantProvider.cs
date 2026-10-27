@@ -5,16 +5,11 @@ namespace ms_fleet.Api.Infrastructure.Auth;
 
 /// <summary>
 /// Resuelve el tenant desde las claims del usuario autenticado (HttpContext.User).
-/// Sin token o con token inválido la petición llega anónima y ShouldFilter es false,
-/// de modo que las llamadas internas (p. ej. ms-route → /api/buses/assigned/{profileId})
-/// no se filtran.
+/// Los endpoints REST exigen un access token valido, así que en la práctica siempre
+/// hay usuario; SuperAdmin (roleId 5) no se filtra.
 /// </summary>
 public sealed class HttpContextTenantProvider : ITenantProvider
 {
-    private const string RoleIdClaim = "roleId";
-    private const string CampusIdClaim = "campusId";
-    private const string SchoolIdClaim = "schoolId";
-
     public int? RoleId { get; }
     public Guid? CampusId { get; }
     public Guid? SchoolId { get; }
@@ -25,9 +20,9 @@ public sealed class HttpContextTenantProvider : ITenantProvider
         var user = httpContextAccessor.HttpContext?.User;
         if (user?.Identity?.IsAuthenticated != true) return;
 
-        RoleId = ParseInt(user, RoleIdClaim);
-        CampusId = ParseGuid(user, CampusIdClaim);
-        SchoolId = ParseGuid(user, SchoolIdClaim);
+        RoleId = ParseInt(user, SgClaimTypes.RoleId);
+        CampusId = ParseGuid(user, SgClaimTypes.CampusId);
+        SchoolId = ParseGuid(user, SgClaimTypes.SchoolId);
 
         ShouldFilter = RoleId switch
         {

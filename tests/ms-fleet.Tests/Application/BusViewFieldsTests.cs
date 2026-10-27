@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
@@ -28,7 +30,7 @@ public class BusViewFieldsTests
         busRepo.ModelNames[7] = new ModelNames("Mercedes", "O500");
 
         var service = new ListBusesBasicService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository(), new BusMapper());
 
         var resultItems = await service.ExecuteAsync();
         Assert.That(resultItems, Has.Exactly(1).Items);
@@ -50,7 +52,7 @@ public class BusViewFieldsTests
         await busRepo.AddAsync(bus);
 
         var service = new ListBusesBasicService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository(), new BusMapper());
 
         var result = (await service.ExecuteAsync()).Single();
 
@@ -67,7 +69,7 @@ public class BusViewFieldsTests
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         await assignmentRepo.AddAsync(new DriverAssignment { BusId = bus.Id, ProfileId = Guid.NewGuid() });
 
-        var service = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
+        var service = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository(), new BusMapper());
 
         var resultItems = await service.ExecuteAsync();
         Assert.That(resultItems, Has.Exactly(1).Items);
@@ -85,7 +87,7 @@ public class BusViewFieldsTests
         busRepo.ModelNames[3] = new ModelNames("Hino", "300");
 
         var service = new GetBusDetailService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeGpsDeviceService());
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeGpsDeviceService(), new BusMapper(), AccessPolicies.SuperAdmin());
 
         var result = await service.ExecuteAsync(bus.Id);
 
@@ -103,7 +105,7 @@ public class BusViewFieldsTests
         await busRepo.AddAsync(bus);
 
         var service = new GetBusDetailService(
-            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeGpsDeviceService());
+            busRepo, new InMemoryDriverAssignmentRepository(), new FakeIamService(), new FakeGpsDeviceService(), new BusMapper(), AccessPolicies.SuperAdmin());
 
         var result = await service.ExecuteAsync(bus.Id);
 

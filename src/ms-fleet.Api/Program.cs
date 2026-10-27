@@ -44,9 +44,9 @@ builder.Services.AddRateLimiter(options =>
         }));
 });
 
-// El gateway (Kong) valida el access token RS256 y reenvía la identidad en las
-// cabeceras X-User-*. Aquí solo se confía en ellas para poblar HttpContext.User.
-builder.Services.AddGatewayAuthentication();
+// El servicio valida por su cuenta el access token RS256 de ms-iam (JWKS):
+// la identidad sale del token, no de las cabeceras X-User-* del gateway.
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddFleetServices(builder.Configuration);
 
@@ -60,8 +60,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseAuthorization();
 app.UseRateLimiter();
-app.MapControllers();
+
+// Todo endpoint REST exige un access token valido. El gRPC interno
+// (RouteGrpcService, puerto 5001) no pasa por aqui.
+app.MapControllers().RequireAuthorization();
 
 // Servidor interno route.v1.RouteService (consultas de bus de ms-route).
 // Solo responde sobre el endpoint h2c dedicado que declara .env.example.

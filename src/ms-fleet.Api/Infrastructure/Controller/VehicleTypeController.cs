@@ -1,3 +1,5 @@
+using ms_fleet.Api.Infrastructure.Auth;
+using ms_fleet.Api.Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Domain.Ports.In;
@@ -19,6 +21,7 @@ public class VehicleTypeController : ControllerBase
         _listModelsUseCase = listModelsUseCase;
     }
 
+    [RequirePermission(FleetPermissions.BusesRead)]
     [HttpGet("brands")]
     public async Task<ActionResult<List<BrandListResponse>>> ListBrands(CancellationToken ct)
     {
@@ -26,6 +29,7 @@ public class VehicleTypeController : ControllerBase
         return Ok(brands);
     }
 
+    [RequirePermission(FleetPermissions.BusesRead)]
     [HttpGet("models")]
     public async Task<ActionResult<List<ModelListResponse>>> ListModels([FromQuery] byte? brandId, CancellationToken ct)
     {

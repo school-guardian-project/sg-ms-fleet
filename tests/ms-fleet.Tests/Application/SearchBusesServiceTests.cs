@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Application.UseCase.Strategy;
 using ms_fleet.Api.Domain.Model;
@@ -35,7 +37,7 @@ public class SearchBusesServiceTests
         await busRepo.AddAsync(hino);
         busRepo.ModelNames[9] = new ModelNames("Hino", "300");
 
-        var listUseCase = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository());
+        var listUseCase = new ListBusesBasicService(busRepo, assignmentRepo, new FakeIamService(), new FakeTenantProvider(), new InMemoryCampusReferenceRepository(), new BusMapper());
         var service = new SearchBusesService(listUseCase, new IBusSearchStrategy[]
         {
             new PlateSearchStrategy(),
@@ -50,8 +52,8 @@ public class SearchBusesServiceTests
     {
         var (service, _, _) = await CreateServiceAsync();
 
-        Assert.That(await service.SearchAsync(string.Empty), Is.Empty);
-        Assert.That(await service.SearchAsync("   "), Is.Empty);
+        Assert.That(await service.SearchAsync(new SearchBusesRequest { SearchTerm = string.Empty }), Is.Empty);
+        Assert.That(await service.SearchAsync(new SearchBusesRequest { SearchTerm = "   " }), Is.Empty);
     }
 
     [Test]
@@ -59,11 +61,11 @@ public class SearchBusesServiceTests
     {
         var (service, mercedes, hino) = await CreateServiceAsync();
 
-        var result = await service.SearchAsync("DEF456");
+        var result = await service.SearchAsync(new SearchBusesRequest { SearchTerm = "DEF456" });
 
         Assert.That(result.Single().Id, Is.EqualTo(hino.Id));
 
-        var lowerCase = await service.SearchAsync("abc123");
+        var lowerCase = await service.SearchAsync(new SearchBusesRequest { SearchTerm = "abc123" });
 
         Assert.That(lowerCase.Single().Id, Is.EqualTo(mercedes.Id));
     }
@@ -73,13 +75,13 @@ public class SearchBusesServiceTests
     {
         var (service, mercedes, hino) = await CreateServiceAsync();
 
-        var byBrand = await service.SearchAsync("mercedes");
+        var byBrand = await service.SearchAsync(new SearchBusesRequest { SearchTerm = "mercedes" });
         Assert.That(byBrand.Single().Id, Is.EqualTo(mercedes.Id));
 
-        var byModel = await service.SearchAsync("300");
+        var byModel = await service.SearchAsync(new SearchBusesRequest { SearchTerm = "300" });
         Assert.That(byModel.Single().Id, Is.EqualTo(hino.Id));
 
-        var byDriver = await service.SearchAsync("Test Driver");
+        var byDriver = await service.SearchAsync(new SearchBusesRequest { SearchTerm = "Test Driver" });
         Assert.That(byDriver.Single().Id, Is.EqualTo(mercedes.Id));
     }
 
@@ -88,7 +90,7 @@ public class SearchBusesServiceTests
     {
         var (service, _, hino) = await CreateServiceAsync();
 
-        var result = await service.SearchAsync("hInO");
+        var result = await service.SearchAsync(new SearchBusesRequest { SearchTerm = "hInO" });
 
         Assert.That(result.Single().Id, Is.EqualTo(hino.Id));
     }

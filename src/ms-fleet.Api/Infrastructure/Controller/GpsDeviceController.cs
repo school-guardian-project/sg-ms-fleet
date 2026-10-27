@@ -1,3 +1,5 @@
+using ms_fleet.Api.Infrastructure.Auth;
+using ms_fleet.Api.Domain.Model;
 ﻿using Microsoft.AspNetCore.Mvc;
 using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Application.Mapper;
@@ -19,6 +21,7 @@ public class GpsDeviceController : ControllerBase
     }
 
     /// <summary>Dispositivos GPS con el bus activo que los lleva (si lo hay).</summary>
+    [RequirePermission(FleetPermissions.BusesManage)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GpsDeviceResponse>>> List(CancellationToken ct)
     {

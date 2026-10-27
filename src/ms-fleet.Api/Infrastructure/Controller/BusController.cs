@@ -1,3 +1,5 @@
+using ms_fleet.Api.Infrastructure.Auth;
+using ms_fleet.Api.Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ms_fleet.Api.Application.Dto.Request;
@@ -47,6 +49,7 @@ public class BusController : ControllerBase
     }
 
     [EnableRateLimiting("writes")]
+    [RequirePermission(FleetPermissions.BusesManage)]
     [HttpPost]
     public async Task<ActionResult<CreateBusResponse>> Create([FromBody] CreateBusRequest request, CancellationToken ct)
     {
@@ -62,6 +65,7 @@ public class BusController : ControllerBase
     }
 
     [EnableRateLimiting("writes")]
+    [RequirePermission(FleetPermissions.BusesManage)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBusRequest request, CancellationToken ct)
     {
@@ -81,6 +85,7 @@ public class BusController : ControllerBase
     }
 
     [EnableRateLimiting("writes")]
+    [RequirePermission(FleetPermissions.BusesManage)]
     [HttpPatch("{id:guid}/status")]
     public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeStatusRequest request, CancellationToken ct)
     {
@@ -99,6 +104,7 @@ public class BusController : ControllerBase
         return NoContent();
     }
 
+    [RequirePermission(FleetPermissions.BusesRead)]
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<BusListItemResponse>>> ListBasic(CancellationToken ct)
     {
@@ -106,6 +112,7 @@ public class BusController : ControllerBase
         return Ok(buses);
     }
 
+    [RequirePermission(FleetPermissions.BusesRead)]
     [HttpGet("search")]
     public async Task<ActionResult<IReadOnlyList<BusListItemResponse>>> Search([FromQuery] string? search, CancellationToken ct)
     {
@@ -114,6 +121,7 @@ public class BusController : ControllerBase
         return Ok(buses);
     }
 
+    [RequirePermission(FleetPermissions.BusesRead)]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<BusDetailResponse>> GetDetail(Guid id, CancellationToken ct)
     {
@@ -121,14 +129,26 @@ public class BusController : ControllerBase
         return bus is null ? NotFound() : Ok(bus);
     }
 
+    /// <summary>
+    /// Bus asignado a un conductor: el propio conductor, o personal con buses.read
+    /// (la regla de pertenencia vive en la capa de aplicacion).
+    /// </summary>
     [HttpGet("assigned/{profileId:guid}")]
     public async Task<ActionResult<BusAssignedResponse>> GetAssignedToDriver(Guid profileId, CancellationToken ct)
     {
-        var bus = await _getBusAssignedToDriverUseCase.ExecuteAsync(profileId, ct);
-        return bus is null ? NotFound() : Ok(bus);
+        try
+        {
+            var bus = await _getBusAssignedToDriverUseCase.ExecuteAsync(profileId, ct);
+            return bus is null ? NotFound() : Ok(bus);
+        }
+        catch (BusAccessDeniedException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status403Forbidden);
+        }
     }
 
     [EnableRateLimiting("writes")]
+    [RequirePermission(FleetPermissions.BusesManage)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
@@ -137,6 +157,7 @@ public class BusController : ControllerBase
     }
 
     [EnableRateLimiting("writes")]
+    [RequirePermission(FleetPermissions.DriversManage)]
     [HttpPut("{busId:guid}/driver")]
     public async Task<IActionResult> AssignDriver(Guid busId, [FromBody] AssignDriverRequest request, CancellationToken ct)
     {
@@ -153,6 +174,7 @@ public class BusController : ControllerBase
     }
 
     [EnableRateLimiting("writes")]
+    [RequirePermission(FleetPermissions.DriversManage)]
     [HttpDelete("{busId:guid}/driver")]
     public async Task<IActionResult> UnassignDriver(Guid busId, CancellationToken ct)
     {
