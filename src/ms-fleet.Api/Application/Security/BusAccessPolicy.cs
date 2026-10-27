@@ -48,24 +48,4 @@ public sealed class BusAccessPolicy
     /// <summary>La sede es visible para el tenant del token.</summary>
     public Task<bool> CanSeeCampusAsync(Guid campusId, CancellationToken ct = default) =>
         _scope.CanSeeCampusAsync(campusId, ct);
-
-    /// <summary>
-    /// Escrituras sobre un bus existente (editar, cambiar estado, borrar, asignar
-    /// o quitar conductor): solo sobre buses del colegio del admin. El SuperAdmin
-    /// no tiene restriccion.
-    /// </summary>
-    public async Task EnsureCanManageBusAsync(Bus bus, CancellationToken ct = default)
-    {
-        if (!await CanSeeBusAsync(bus, ct))
-            throw new BusAccessDeniedException();
-    }
-
-    /// <summary>
-    /// Sede de destino al crear o mover un bus: debe pertenecer al colegio del admin.
-    /// </summary>
-    public async Task EnsureCanUseCampusAsync(Guid campusId, CancellationToken ct = default)
-    {
-        if (!await CanSeeCampusAsync(campusId, ct))
-            throw new BusAccessDeniedException();
-    }
 }
