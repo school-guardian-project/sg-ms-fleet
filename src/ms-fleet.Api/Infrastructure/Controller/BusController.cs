@@ -11,6 +11,7 @@ namespace ms_fleet.Api.Infrastructure.Controller;
 
 [ApiController]
 [Route("api/buses")]
+[BusAccessDeniedFilter]
 public class BusController : ControllerBase
 {
     private readonly ICreateBusUseCase _createBusUseCase;
