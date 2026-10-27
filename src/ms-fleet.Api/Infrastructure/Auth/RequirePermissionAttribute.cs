@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace ms_fleet.Api.Infrastructure.Security;
+namespace ms_fleet.Api.Infrastructure.Auth;
 
 /// <summary>
 /// Exige que la peticion incluya el permiso indicado (FR-2.1). El permiso viaja

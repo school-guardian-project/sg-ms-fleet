@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using ms_fleet.Api.Domain.Ports.Out;
 
-namespace ms_fleet.Api.Infrastructure.Security;
+namespace ms_fleet.Api.Infrastructure.Auth;
 
 /// <summary>
 /// Resuelve el tenant desde las claims del usuario autenticado (HttpContext.User).
