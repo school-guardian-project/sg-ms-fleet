@@ -1,3 +1,5 @@
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
@@ -8,59 +10,53 @@ public class UpdateBusService : IUpdateBusUseCase
 {
     private readonly IBusRepository _busRepository;
     private readonly IGpsDeviceService _gpsDeviceService;
+    private readonly IBusRequestMapper _requestMapper;
 
-    public UpdateBusService(IBusRepository busRepository, IGpsDeviceService gpsDeviceService)
+    public UpdateBusService(
+        IBusRepository busRepository,
+        IGpsDeviceService gpsDeviceService,
+        IBusRequestMapper requestMapper)
     {
         _busRepository = busRepository;
         _gpsDeviceService = gpsDeviceService;
+        _requestMapper = requestMapper;
     }
 
-    public async Task ExecuteAsync(
-        Guid busId,
-        Guid campuseId,
-        DateTime soatValidity,
-        byte capacity,
-        int modelId,
-        string? plate = null,
-        Guid? gpsDeviceId = null,
-        bool? gpsStatus = null,
-        string? gpsImei = null,
-        CancellationToken ct = default)
+    public async Task ExecuteAsync(Guid busId, UpdateBusRequest request, CancellationToken ct = default)
     {
         var bus = await _busRepository.GetByIdAsync(busId, ct)
             ?? throw new InvalidOperationException("Bus not found");
 
-        if (capacity <= 0)
+        if (request.Capacity.HasValue && request.Capacity <= 0)
             throw new ArgumentException("Capacity must be greater than zero");
 
-        var newPlate = plate?.Trim();
+        string? newPlate = request.Plate?.Trim();
         if (!string.IsNullOrEmpty(newPlate)
             && !string.Equals(newPlate, bus.Plate, StringComparison.OrdinalIgnoreCase)
             && await _busRepository.ExistsByPlateAsync(newPlate, ct))
             throw new ArgumentException("Plate already exists");
 
-        if ((gpsDeviceId is null || gpsDeviceId == Guid.Empty) && !string.IsNullOrWhiteSpace(gpsImei))
-            gpsDeviceId = await _gpsDeviceService.ResolveByImeiAsync(gpsImei, ct);
+        Guid? gpsDeviceId = request.GpsDeviceId;
+        if ((gpsDeviceId is null || gpsDeviceId == Guid.Empty) && !string.IsNullOrWhiteSpace(request.GpsImei))
+            gpsDeviceId = await _gpsDeviceService.ResolveByImeiAsync(request.GpsImei, ct);
 
-        if (gpsDeviceId is { } gpsId && gpsId != Guid.Empty && gpsId != bus.GpsDeviceId)
+        Guid? resolvedGpsId = gpsDeviceId;
+        if (resolvedGpsId is { } gpsId && gpsId != Guid.Empty && gpsId != bus.GpsDeviceId)
         {
             var device = await _gpsDeviceService.GetAsync(gpsId, ct)
                 ?? throw new ArgumentException("GPS device not found");
             if (device.AssignedBusId is not null && device.AssignedBusId != bus.Id)
                 throw new ArgumentException("GPS device already assigned");
-            bus.GpsDeviceId = gpsId;
         }
 
-        // Campos que el cliente no envia conservan su valor actual.
-        if (campuseId != Guid.Empty) bus.CampuseId = campuseId;
-        if (soatValidity != default) bus.SoatValidity = soatValidity;
-        if (modelId > 0) bus.ModelId = (byte)modelId;
-        if (!string.IsNullOrEmpty(newPlate)) bus.Plate = newPlate;
-        bus.Capacity = capacity;
+        _requestMapper.UpdateDomain(bus, request);
+
+        if (resolvedGpsId is { } resolvedId && resolvedId != Guid.Empty)
+            bus.GpsDeviceId = resolvedId;
 
         await _busRepository.UpdateAsync(bus, ct);
 
-        if (gpsStatus is not null)
-            await _gpsDeviceService.SetStatusAsync(bus.GpsDeviceId, gpsStatus.Value, ct);
+        if (request.GpsStatus is not null)
+            await _gpsDeviceService.SetStatusAsync(bus.GpsDeviceId, request.GpsStatus.Value, ct);
     }
 }

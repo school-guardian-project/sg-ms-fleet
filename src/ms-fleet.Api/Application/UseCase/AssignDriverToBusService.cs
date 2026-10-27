@@ -1,3 +1,4 @@
+using ms_fleet.Api.Application.Dto.Request;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
@@ -20,7 +21,7 @@ public class AssignDriverToBusService : IAssignDriverToBusUseCase
         _iamService = iamService;
     }
 
-    public async Task ExecuteAsync(Guid busId, Guid profileId, CancellationToken ct = default)
+    public async Task ExecuteAsync(Guid busId, AssignDriverRequest request, CancellationToken ct = default)
     {
         var bus = await _busRepository.GetByIdAsync(busId, ct)
             ?? throw new InvalidOperationException("Bus not found");
@@ -32,16 +33,16 @@ public class AssignDriverToBusService : IAssignDriverToBusUseCase
         if (busHasDriver != null)
             throw new InvalidOperationException("The bus already has a driver assigned");
 
-        if (!await _iamService.ProfileExistsAsync(profileId, ct))
+        if (!await _iamService.ProfileExistsAsync(request.ProfileId, ct))
             throw new InvalidOperationException("Driver profile not found");
 
-        var existingAssignment = await _assignmentRepository.GetActiveByProfileIdAsync(profileId, ct);
+        var existingAssignment = await _assignmentRepository.GetActiveByProfileIdAsync(request.ProfileId, ct);
         if (existingAssignment != null)
             throw new InvalidOperationException("Driver already assigned to a bus");
 
         var assignment = new DriverAssignment
         {
-            ProfileId = profileId,
+            ProfileId = request.ProfileId,
             BusId = busId
         };
 

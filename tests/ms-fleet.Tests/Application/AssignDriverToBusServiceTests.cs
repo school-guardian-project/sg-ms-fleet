@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Mapper;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Tests.Fakes;
@@ -19,7 +21,7 @@ public class AssignDriverToBusServiceTests
         var bus = new Bus { Plate = "ABC123", Status = Status.Active };
         await busRepo.AddAsync(bus);
 
-        await useCase.ExecuteAsync(bus.Id, Guid.NewGuid());
+        await useCase.ExecuteAsync(bus.Id, new AssignDriverRequest { ProfileId = Guid.NewGuid() });
 
         var assignment = await assignmentRepo.GetActiveByBusIdAsync(bus.Id);
         Assert.That(assignment, Is.Not.Null);
@@ -37,7 +39,7 @@ public class AssignDriverToBusServiceTests
         await busRepo.AddAsync(bus);
 
         Assert.ThrowsAsync<InvalidOperationException>(() =>
-            useCase.ExecuteAsync(bus.Id, Guid.NewGuid()));
+            useCase.ExecuteAsync(bus.Id, new AssignDriverRequest { ProfileId = Guid.NewGuid() }));
     }
 
     [Test]
@@ -54,10 +56,10 @@ public class AssignDriverToBusServiceTests
         await busRepo.AddAsync(bus2);
 
         var profileId = Guid.NewGuid();
-        await useCase.ExecuteAsync(bus1.Id, profileId);
+        await useCase.ExecuteAsync(bus1.Id, new AssignDriverRequest { ProfileId = profileId });
 
         Assert.ThrowsAsync<InvalidOperationException>(() =>
-            useCase.ExecuteAsync(bus2.Id, profileId));
+            useCase.ExecuteAsync(bus2.Id, new AssignDriverRequest { ProfileId = profileId }));
     }
 
     [Test]
@@ -71,9 +73,9 @@ public class AssignDriverToBusServiceTests
         var bus = new Bus { Plate = "ABC123", Status = Status.Active };
         await busRepo.AddAsync(bus);
 
-        await useCase.ExecuteAsync(bus.Id, Guid.NewGuid());
+        await useCase.ExecuteAsync(bus.Id, new AssignDriverRequest { ProfileId = Guid.NewGuid() });
 
         Assert.ThrowsAsync<InvalidOperationException>(() =>
-            useCase.ExecuteAsync(bus.Id, Guid.NewGuid()));
+            useCase.ExecuteAsync(bus.Id, new AssignDriverRequest { ProfileId = Guid.NewGuid() }));
     }
 }

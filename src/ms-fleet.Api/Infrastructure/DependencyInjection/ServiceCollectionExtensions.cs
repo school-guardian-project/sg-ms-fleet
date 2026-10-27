@@ -1,4 +1,5 @@
-using ms_fleet.Api.Domain.Model;
+using ms_fleet.Api.Application.Mapper;
+using ms_fleet.Api.Application.Security;
 using ms_fleet.Api.Application.UseCase;
 using ms_fleet.Api.Application.UseCase.Strategy;
 using ms_fleet.Api.Domain.Ports.In;
@@ -23,7 +24,6 @@ public static class ServiceCollectionExtensions
             poolSize: 32);
 
         services.AddHttpContextAccessor();
-        services.AddGatewayAuthentication();
 
         // Servidor gRPC de route.v1.RouteService (bus para las vistas de ruta
         // de ms-route). Toda llamada interna debe traer x-internal-api-key.
@@ -33,6 +33,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDriverAssignmentRepository, DriverAssignmentRepository>();
         services.AddScoped<ICampusReferenceRepository, CampusReferenceRepository>();
         services.AddScoped<ITenantProvider, HttpContextTenantProvider>();
+        services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
+        services.AddScoped<BusAccessPolicy>();
+
+        // Mappers (stateless, singleton)
+        services.AddSingleton<IBusMapper, BusMapper>();
+        services.AddSingleton<IVehicleTypeMapper, VehicleTypeMapper>();
+        services.AddSingleton<IGpsDeviceMapper, GpsDeviceMapper>();
+        services.AddSingleton<IBusRequestMapper, BusRequestMapper>();
 
         services.AddScoped<ICreateBusUseCase, CreateBusService>();
         services.AddScoped<IUpdateBusUseCase, UpdateBusService>();

@@ -1,4 +1,5 @@
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Dto.Request;
+using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Ports.Out;
 
@@ -17,9 +18,9 @@ public class SearchBusesService
         _strategies = strategies;
     }
 
-    public async Task<IReadOnlyList<BusListItemDto>> SearchAsync(string? search, CancellationToken ct = default)
+    public async Task<IReadOnlyList<BusListItemResponse>> SearchAsync(SearchBusesRequest request, CancellationToken ct = default)
     {
-        search = search?.Trim();
+        var search = request.SearchTerm?.Trim();
 
         if (string.IsNullOrEmpty(search)) return [];
 

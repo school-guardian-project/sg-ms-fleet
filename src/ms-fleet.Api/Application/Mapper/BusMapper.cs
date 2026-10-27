@@ -1,15 +1,22 @@
-using ms_fleet.Api.Application.Dtos;
+using ms_fleet.Api.Application.Dto.Response;
 using ms_fleet.Api.Domain.Model;
 
 namespace ms_fleet.Api.Application.Mapper;
 
 /// <summary>
-/// Mapeos de dominio a DTO de las vistas de bus. La logica de resolucion
-/// (asignaciones, nombres de modelo, cache) permanece en los servicios.
+/// Maps Bus domain entities to Response DTOs.
+/// This mapper is stateless and can be registered as a singleton.
 /// </summary>
-public static class BusMapper
+public interface IBusMapper
 {
-    public static BusListItemDto ToListItem(Bus bus, string driverName, ModelNames? names)
+    BusListItemResponse ToListItem(Bus bus, string driverName, ModelNames? names);
+    BusDetailResponse ToDetail(Bus bus, string driverName, ModelNames? names, GpsDeviceInfo? gps, Guid? driverProfileId);
+    BusAssignedResponse ToAssigned(Bus bus);
+}
+
+public sealed class BusMapper : IBusMapper
+{
+    public BusListItemResponse ToListItem(Bus bus, string driverName, ModelNames? names)
         => new(
             bus.Id,
             bus.Plate,
@@ -19,7 +26,7 @@ public static class BusMapper
             names?.Model ?? string.Empty,
             bus.Status.ToString());
 
-    public static BusDetailDto ToDetail(
+    public BusDetailResponse ToDetail(
         Bus bus,
         string driverName,
         ModelNames? names,
@@ -41,6 +48,6 @@ public static class BusMapper
             gps?.GpsStatus,
             driverProfileId);
 
-    public static BusAssignedDto ToAssigned(Bus bus)
+    public BusAssignedResponse ToAssigned(Bus bus)
         => new(bus.Id, bus.Plate, bus.CampuseId);
 }
