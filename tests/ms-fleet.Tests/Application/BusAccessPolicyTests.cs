@@ -124,15 +124,14 @@ public class BusAccessPolicyTests
             RoleId = roleId,
             SchoolId = schoolId,
             CampusId = campusId,
-            ShouldFilter = roleId == FleetRoles.Admin ? schoolId is not null
-                : roleId == FleetRoles.SuperAdmin ? false
-                : campusId is not null,
+            // Igual que HttpContextTenantProvider: todo autenticado salvo el SuperAdmin.
+            ShouldFilter = roleId != FleetRoles.SuperAdmin,
         };
         return new BusAccessPolicy(new FakeCurrentUser { ProfileId = profileId, Permissions = permissions ?? [] }, tenant, _campuses);
     }
 
-    private GetBusAssignedToDriverService AssignedService(BusAccessPolicy policy) =>
-        new(_assignments, _buses, new BusMapper(), policy);
+    private AuthorizedGetBusAssignedToDriverService AssignedService(BusAccessPolicy policy) =>
+        new(new GetBusAssignedToDriverService(_assignments, _buses, new BusMapper()), policy);
 
     private GetBusDetailService DetailService(BusAccessPolicy policy) =>
         new(_buses, _assignments, new FakeIamService(), new FakeGpsDeviceService(), new BusMapper(), policy);

@@ -15,7 +15,7 @@ public class GetBusAssignedToDriverServiceTests
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var busRepo = new InMemoryBusRepository();
-        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper(), AccessPolicies.SuperAdmin());
+        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper());
 
         var profileId = Guid.NewGuid();
         var bus = new Bus { Plate = "ABC123", CampuseId = Guid.NewGuid(), Status = Status.Active };
@@ -41,7 +41,7 @@ public class GetBusAssignedToDriverServiceTests
         var useCase = new GetBusAssignedToDriverService(
             new InMemoryDriverAssignmentRepository(),
             new InMemoryBusRepository(),
-            new BusMapper(), AccessPolicies.SuperAdmin());
+            new BusMapper());
 
         var result = await useCase.ExecuteAsync(Guid.NewGuid());
 
@@ -53,7 +53,7 @@ public class GetBusAssignedToDriverServiceTests
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var busRepo = new InMemoryBusRepository();
-        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper(), AccessPolicies.SuperAdmin());
+        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper());
 
         var profileId = Guid.NewGuid();
         var bus = new Bus { Plate = "XYZ789", Status = Status.Inactive };
@@ -75,7 +75,7 @@ public class GetBusAssignedToDriverServiceTests
     {
         var assignmentRepo = new InMemoryDriverAssignmentRepository();
         var busRepo = new InMemoryBusRepository();
-        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper(), AccessPolicies.SuperAdmin());
+        var useCase = new GetBusAssignedToDriverService(assignmentRepo, busRepo, new BusMapper());
 
         var profileId = Guid.NewGuid();
         var bus = new Bus { Plate = "DEF456", Status = Status.Active };

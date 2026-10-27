@@ -5,8 +5,9 @@ namespace ms_fleet.Api.Application.Security;
 
 /// <summary>
 /// Sedes visibles para el tenant del token actual. null = sin filtro
-/// (SuperAdmin, o token sin tenant).
+/// (SuperAdmin, o llamada interna sin usuario).
 /// Admin (roleId 1): todas las sedes de su colegio. Student/Driver/Parent (2/3/4): solo su sede.
+/// Un tenant filtrable sin colegio ni sede resolubles no ve ninguna (falla cerrado).
 /// </summary>
 public sealed class BusTenantScope
 {
@@ -26,10 +27,10 @@ public sealed class BusTenantScope
         if (_tenantProvider.RoleId == FleetRoles.Admin && _tenantProvider.SchoolId is { } schoolId)
             return await _campusReferenceRepository.GetCampusIdsBySchoolAsync(schoolId, ct);
 
-        if (_tenantProvider.CampusId is { } campusId)
+        if (_tenantProvider.RoleId != FleetRoles.Admin && _tenantProvider.CampusId is { } campusId)
             return [campusId];
 
-        return null;
+        return [];
     }
 
     public async Task<bool> CanSeeCampusAsync(Guid campusId, CancellationToken ct = default)

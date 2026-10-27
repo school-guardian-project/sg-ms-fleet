@@ -11,6 +11,7 @@ namespace ms_fleet.Api.Infrastructure.Controller;
 
 [ApiController]
 [Route("api/buses")]
+[BusAccessDeniedFilter]
 public class BusController : ControllerBase
 {
     private readonly ICreateBusUseCase _createBusUseCase;
@@ -136,15 +137,8 @@ public class BusController : ControllerBase
     [HttpGet("assigned/{profileId:guid}")]
     public async Task<ActionResult<BusAssignedResponse>> GetAssignedToDriver(Guid profileId, CancellationToken ct)
     {
-        try
-        {
-            var bus = await _getBusAssignedToDriverUseCase.ExecuteAsync(profileId, ct);
-            return bus is null ? NotFound() : Ok(bus);
-        }
-        catch (BusAccessDeniedException ex)
-        {
-            return Problem(detail: ex.Message, statusCode: StatusCodes.Status403Forbidden);
-        }
+        var bus = await _getBusAssignedToDriverUseCase.ExecuteAsync(profileId, ct);
+        return bus is null ? NotFound() : Ok(bus);
     }
 
     [EnableRateLimiting("writes")]

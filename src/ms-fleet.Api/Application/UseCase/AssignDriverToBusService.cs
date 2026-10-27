@@ -3,6 +3,8 @@ using ms_fleet.Api.Domain.Ports.In;
 using ms_fleet.Api.Domain.Model;
 using ms_fleet.Api.Domain.Ports.Out;
 
+using ms_fleet.Api.Application.Security;
+
 namespace ms_fleet.Api.Application.UseCase;
 
 public class AssignDriverToBusService : IAssignDriverToBusUseCase
@@ -10,21 +12,26 @@ public class AssignDriverToBusService : IAssignDriverToBusUseCase
     private readonly IBusRepository _busRepository;
     private readonly IDriverAssignmentRepository _assignmentRepository;
     private readonly IIamService _iamService;
+    private readonly BusAccessPolicy _accessPolicy;
 
     public AssignDriverToBusService(
         IBusRepository busRepository,
         IDriverAssignmentRepository assignmentRepository,
-        IIamService iamService)
+        IIamService iamService,
+        BusAccessPolicy accessPolicy)
     {
         _busRepository = busRepository;
         _assignmentRepository = assignmentRepository;
         _iamService = iamService;
+        _accessPolicy = accessPolicy;
     }
 
     public async Task ExecuteAsync(Guid busId, AssignDriverRequest request, CancellationToken ct = default)
     {
         var bus = await _busRepository.GetByIdAsync(busId, ct)
             ?? throw new InvalidOperationException("Bus not found");
+
+        await _accessPolicy.EnsureCanManageBusAsync(bus, ct);
 
         if (bus.Status != Status.Active)
             throw new InvalidOperationException("Cannot assign a driver to an inactive bus");

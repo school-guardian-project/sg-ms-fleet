@@ -11,11 +11,11 @@ namespace ms_fleet.Api.Infrastructure.Grpc;
 /// </summary>
 public class RouteGrpcService : RouteService.RouteServiceBase
 {
-    private readonly IGetBusAssignedToDriverUseCase _getBusAssignedToDriver;
+    private readonly IFindBusAssignedToDriverQuery _getBusAssignedToDriver;
     private readonly IGetBusDetailUseCase _getBusDetail;
 
     public RouteGrpcService(
-        IGetBusAssignedToDriverUseCase getBusAssignedToDriver,
+        IFindBusAssignedToDriverQuery getBusAssignedToDriver,
         IGetBusDetailUseCase getBusDetail)
     {
         _getBusAssignedToDriver = getBusAssignedToDriver;
