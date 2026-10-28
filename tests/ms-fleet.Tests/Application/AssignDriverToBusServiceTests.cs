@@ -28,6 +28,31 @@ public class AssignDriverToBusServiceTests
     }
 
     [Test]
+    public async Task AssignThenRead_UsesTheDriverProfile_AndClosingTheAssignmentRemovesTheBus()
+    {
+        var buses = new InMemoryBusRepository();
+        var assignments = new InMemoryDriverAssignmentRepository();
+        var bus = new Bus { Plate = "ABC123", Status = Status.Active };
+        await buses.AddAsync(bus);
+        var profileId = Guid.NewGuid();
+        var otherProfileId = Guid.NewGuid();
+        var assign = new AssignDriverToBusService(
+            buses, assignments, new FakeIamService(), AccessPolicies.SuperAdmin());
+        var lookup = new GetBusAssignedToDriverService(assignments, buses, new BusMapper());
+
+        await assign.ExecuteAsync(bus.Id, new AssignDriverRequest { ProfileId = profileId });
+        var saved = await lookup.ExecuteAsync(profileId);
+        Assert.That(saved, Is.Not.Null);
+        Assert.That(saved!.Id, Is.EqualTo(bus.Id));
+        Assert.That(saved.Plate, Is.EqualTo("ABC123"));
+        Assert.That(await lookup.ExecuteAsync(otherProfileId), Is.Null);
+        Assert.That((await assignments.GetActiveByBusIdAsync(bus.Id))!.ProfileId, Is.EqualTo(profileId));
+
+        await assignments.CloseActiveAsync(bus.Id);
+        Assert.That(await lookup.ExecuteAsync(profileId), Is.Null);
+    }
+
+    [Test]
     public async Task ExecuteAsync_WithInactiveBus_ShouldThrow()
     {
         var busRepo = new InMemoryBusRepository();
