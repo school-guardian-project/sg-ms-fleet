@@ -7,7 +7,7 @@ using ms_fleet.Api.Domain.Ports.In;
 namespace ms_fleet.Api.Infrastructure.Controller;
 
 [ApiController]
-[Route("api/vehicle-types")]
+[Route("api/v1/vehicle-types")]
 public class VehicleTypeController : ControllerBase
 {
     private readonly IListBrandsUseCase _listBrandsUseCase;
