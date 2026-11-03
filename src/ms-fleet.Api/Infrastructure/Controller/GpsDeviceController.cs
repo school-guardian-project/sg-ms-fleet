@@ -8,7 +8,7 @@ using ms_fleet.Api.Domain.Ports.Out;
 namespace ms_fleet.Api.Infrastructure.Controller;
 
 [ApiController]
-[Route("api/gps-devices")]
+[Route("api/v1/gps-devices")]
 public class GpsDeviceController : ControllerBase
 {
     private readonly IGpsDeviceService _gpsDeviceService;
