@@ -1,8 +1,44 @@
 # sg-ms-fleet
 
-Microservicio de gestión de flota - School Guardian.
+Microservicio de gestión de flota para School Guardian, responsable de administrar buses, tipos de vehículo, marcas y modelos del sistema de transporte escolar.
 
-## Stack
+## Getting Started
+
+These instructions will give you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on deploying the project on a live system.
+
+### Prerequisites
+
+Requirements for the software and other tools to build, test and push:
+
+- .NET 10 SDK
+- Docker
+- Docker Compose
+
+### Installing
+
+A step by step series of examples that tell you how to get a development environment running.
+
+Start the service with Docker Compose:
+
+    docker compose up -d
+
+## Running the tests
+
+Explain how to run the automated tests for this system.
+
+### Sample Tests
+
+Explain what these tests test and why.
+
+### Style test
+
+Checks if the best practices and the right coding style has been used.
+
+## Deployment
+
+Add additional notes to deploy this on a live system.
+
+## Built With
 
 - .NET 10
 - EF Core 10 + SQL Server
@@ -13,26 +49,10 @@ Microservicio de gestión de flota - School Guardian.
 - AutoMapper
 - xUnit
 
-## Estructura
+## Contributing
 
-```
-src/ms-fleet.Api/
-├── Driver/          (bounded context - choferes)
-├── Vehicle/         (bounded context - vehículos)
-├── Shared/          (shared kernel)
-├── Infrastructure/  (DI, Kafka)
-└── Program.cs
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-tests/ms-fleet.Tests/
-```
+## License
 
-## Comandos
-
-```bash
-dotnet restore
-dotnet build
-dotnet test
-docker compose up -d
-```
-
-## Ejemplo
+This project is licensed under the SCHOOL GUARDIAN PROPRIETARY SOFTWARE LICENSE Version 1.0 — 2026. See the [LICENSE](LICENSE) file for details.
