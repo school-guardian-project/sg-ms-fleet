@@ -10,7 +10,7 @@ using ms_fleet.Api.Domain.Ports.In;
 namespace ms_fleet.Api.Infrastructure.Controller;
 
 [ApiController]
-[Route("api/v1/buses")]
+[Route("api/buses")]
 [BusAccessDeniedFilter]
 public class BusController : ControllerBase
 {
